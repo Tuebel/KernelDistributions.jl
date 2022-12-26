@@ -114,7 +114,7 @@ end
 
     # Array
     d = transformed(KernelExponential(1.0))
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 42)
     @test x isa AbstractVector{Float64}
     # TODO CuArray minimum = 0.0 bug not here?
     @test minimum(x) < 0 < maximum(x)
@@ -122,7 +122,7 @@ end
     @test l isa AbstractVector{Float64}
 
     d = transformed(KernelExponential(Float16(1)))
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 42)
     @test x isa AbstractVector{Float16}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
