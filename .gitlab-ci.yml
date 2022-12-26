@@ -4,7 +4,7 @@
 
 .test_template: &test_definition
   script:
-    - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("KernelDistributions"); Pkg.test("KernelDistributions"; coverage = true)'
+    - julia -e 'using Pkg; Pkg.add(pwd()); Pkg.build("KernelDistributions"); Pkg.test("KernelDistributions"; coverage = true)'
     - julia -e 'using Pkg; Pkg.add("Coverage");
       import KernelDistributions; cd(joinpath(dirname(pathof(KernelDistributions)), ".."));
       using Coverage; cl, tl = get_summary(process_folder());
