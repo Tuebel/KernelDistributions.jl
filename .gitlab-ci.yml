@@ -2,42 +2,31 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved.
 
-.test_template: &test_definition
-  script:
-    - julia -e 'using Pkg; Pkg.add(path=pwd()); Pkg.build("KernelDistributions"); Pkg.test("KernelDistributions"; coverage = true)'
-    - julia -e 'using Pkg; Pkg.add("Coverage");
-      import KernelDistributions; cd(joinpath(dirname(pathof(KernelDistributions)), ".."));
-      using Coverage; cl, tl = get_summary(process_folder());
-      println("(", cl/tl*100, "%) covered")'
-
-# Name a test and select an appropriate image.
-# images comes from Docker hub
-test:1.8.3:
+default:
   image: julia:1.8.3
-  <<: *test_definition
+  before_script:
+    - julia --project=@. -e "import Pkg; Pkg.build()"
 
-test:latest:
-  image: julia
-  <<: *test_definition
-
-# TODO: Do not forget to enable the coverage feature for your project, if you
-# are using code coverage reporting above. This can be done by
-#
-# - Navigating to the `CI/CD Pipelines` settings of your project,
-# - Copying and pasting the default `Simplecov` regex example provided, i.e.,
-#   `\(\d+.\d+\%\) covered` in the `test coverage parsing` textfield.
-
-pages:
-  image: julia:1.8.3
-  stage: deploy
+test:
+  stage: test
   script:
-    - apt-get update -qq && apt-get install -y git # needed by Documenter
-    - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("KernelDistributions");' # rebuild Julia (can be put somewhere else I'm sure
-    - julia -e 'using Pkg; import KernelDistributions; Pkg.add("Documenter")' # install Documenter
-    - julia --color=yes docs/make.jl # make documentation
-    - mv docs/build public # move to the directory picked up by Gitlab pages
+    - apt update && apt install -y python3-pip
+    - pip install lcov_cobertura
+    - julia --project=@. -e 'using Pkg; Pkg.add("LocalCoverage"); using LocalCoverage; cov = generate_coverage("KernelDistributions"; run_test = true); generate_xml(cov, "coverage.xml"); report_coverage_and_exit(cov; target_coverage=40);'
+  coverage: '/TOTAL.*│\s*(\d+)\%/'
   artifacts:
-    paths:
-      - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/coverage.xml
+# pages:
+#   stage: deploy
+#   script:
+#     - julia --project=docs -e 'using Pkg; Pkg.instantiate(); Pkg.develop(PackageSpec(path=pwd()))'
+#     - julia --project=docs --color=yes docs/make.jl
+#     - mv docs/build public # move to the directory picked up by Gitlab pages
+#   artifacts:
+#     paths:
+#       - public
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
