@@ -1,0 +1,20 @@
+name = "KernelDistributions"
+uuid = "9994844f-d2c8-4ad1-b0b3-ac5ee308e667"
+authors = ["Tim Redick <t.redick@irt.rwth-aachen.de>"]
+version = "0.0.1"
+
+[deps]
+Bijectors = "76274a88-744f-5084-9051-94815aaf08c4"
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+DensityInterface = "b429d917-457f-4dbc-8f4c-0cc954292b1d"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+LogExpFunctions = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Random123 = "74087812-796a-5b5d-8853-05524746bad3"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
