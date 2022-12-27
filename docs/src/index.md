@@ -2,7 +2,7 @@
  Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
  All rights reserved. 
 
-# KernelDistributions.jl Documentation
+# KernelDistributions.jl
 
 ```@docs
 KernelDistributions

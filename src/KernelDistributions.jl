@@ -42,6 +42,7 @@ using Random123: Philox2x, set_counter!
     AbstractKernelDistribution{T,S<:ValueSupport} <: UnivariateDistribution{S} 
 Overrides the following behaviors of Distributions.jl:
 - `logdensityof` broadcasts `logpdf`
+- `bijector` for an array of distributions broadcasts `bijector`
 - Arrays are generated RNG specific (default: Array, CUDA.RNG: CuArray) and filled via broadcasting
 """
 abstract type AbstractKernelDistribution{T,S<:ValueSupport} <: UnivariateDistribution{S} end
@@ -57,7 +58,7 @@ const KernelOrKernelArray = Union{KernelOrTransformedKernel,AbstractArray{<:Kern
 include("Array.jl")
 include("Scalar.jl")
 include("KernelExponential.jl")
-
+include("KernelNormal.jl")
 include("Distributions.jl")
 
 export AbstractKernelDistribution

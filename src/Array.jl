@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+# Broadcast bijector for array of distributions since each might have different parameters
+Bijectors.bijector(dists::AbstractArray{<:KernelOrTransformedKernel}) = bijector.(dists)
 
 # By default, Distributions.jl disallows logdensityof with multiple samples (Arrays and Matrices). KernelDistributions should be inherently allowing multiple samples.
 DensityInterface.logdensityof(dist::KernelOrKernelArray, x::AbstractArray) = logpdf.(dist, x)
