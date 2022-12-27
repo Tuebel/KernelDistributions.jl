@@ -1,15 +1,6 @@
-module KernelDistributions
-greet() = print("KernelDistributions.jl greetings from Tim.")
-
-using Bijectors
-using CUDA
-using DensityInterface
-using LogExpFunctions
-using Random
-using Random123: Philox2x, set_counter!
-
-# TODO At one point most of the distributions could be replaced with Distributions.jl. Mixtures could be problematic.
-# TODO should open a pull request to fix type of https://github.com/JuliaStats/Distributions.jl/blob/d19ac4526bab2584a84323eea4af92805f99f034/src/univariate/continuous/uniform.jl#L120
+# @license BSD-3 https://opensource.org/licenses/BSD-3-Clause
+# Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
+# All rights reserved. 
 
 """
 MeasureTheory.jl is what I have used because of the nicer interface until now, but all the type are not isbits and can not be used on the GPU.
@@ -34,6 +25,24 @@ The Interface requires the following to be implemented:
 
 Most of the time Float64 precision is not required, especially for GPU computations.
 Thus, I default to Float32, mostly for memory capacity reasons.
+"""
+module KernelDistributions
+greet() = print("KernelDistributions.jl greetings from Tim.")
+
+using Bijectors
+using CUDA
+using DensityInterface
+using LogExpFunctions
+using Random
+using Random123: Philox2x, set_counter!
+
+# TODO At one point most of the distributions could be replaced with Distributions.jl. Mixtures could be problematic.
+# TODO should open a pull request to fix type of https://github.com/JuliaStats/Distributions.jl/blob/d19ac4526bab2584a84323eea4af92805f99f034/src/univariate/continuous/uniform.jl#L120
+"""
+    AbstractKernelDistribution{T,S<:ValueSupport} <: UnivariateDistribution{S} 
+Overrides the following behaviors of Distributions.jl:
+- `logdensityof` broadcasts `logpdf`
+- Arrays are generated RNG specific (default: Array, CUDA.RNG: CuArray) and filled via broadcasting
 """
 abstract type AbstractKernelDistribution{T,S<:ValueSupport} <: UnivariateDistribution{S} end
 

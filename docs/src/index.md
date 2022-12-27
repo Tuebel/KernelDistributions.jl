@@ -5,5 +5,9 @@
 # KernelDistributions.jl Documentation
 
 ```@docs
+KernelDistributions
+```
+
+```@docs
 AbstractKernelDistribution
 ```
