@@ -18,6 +18,7 @@ if CUDA.functional()
     rngs = [rngs..., curng]
 end
 
+include("dirac.jl")
 include("exponential.jl")
 include("normal.jl")
 include("tail_uniform.jl")
