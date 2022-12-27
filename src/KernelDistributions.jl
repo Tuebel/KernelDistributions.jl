@@ -62,6 +62,7 @@ include("Scalar.jl")
 include("Bijectors.jl")
 include("Distributions.jl")
 
+include("CircularUniform.jl")
 include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
@@ -70,12 +71,14 @@ include("TailUniform.jl")
 export AbstractKernelDistribution
 
 # Distributions
+export CircularUniform
 export KernelDirac
 export KernelExponential
 export KernelNormal
 export TailUniform
 
 # Bijectors
+export Circular
 export ZeroIdentity
 
 using Reexport

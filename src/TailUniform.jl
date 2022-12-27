@@ -14,7 +14,7 @@ end
 TailUniform(min::Real, max::Real) = TailUniform(promote(min, max)...)
 TailUniform(::Type{T}=Float32) where {T} = TailUniform{T}(0.0, 1.0)
 
-Base.show(io::IO, dist::TailUniform{T}) where {T} = print(io, "KernelTailUniform{$(T)}, a: $(dist.min), b: $(dist.max)")
+Base.show(io::IO, dist::TailUniform{T}) where {T} = print(io, "TailUniform{$(T)}, a: $(dist.min), b: $(dist.max)")
 
 Distributions.logpdf(dist::TailUniform{T}, x) where {T<:Real} = -log(dist.max - dist.min)
 
