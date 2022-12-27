@@ -35,8 +35,6 @@ The Interface requires the following to be implemented:
 Most of the time Float64 precision is not required, especially for GPU computations.
 Thus, I default to Float32, mostly for memory capacity reasons.
 """
-
-# TODO Distributions only supported for transformed?
 abstract type AbstractKernelDistribution{T,S<:ValueSupport} <: UnivariateDistribution{S} end
 
 # WARN parametric alias causes method ambiguities, since the parametric type is always present
@@ -53,7 +51,7 @@ include("KernelExponential.jl")
 
 include("Distributions.jl")
 
-
+export AbstractKernelDistribution
 export KernelExponential
 
 using Reexport
