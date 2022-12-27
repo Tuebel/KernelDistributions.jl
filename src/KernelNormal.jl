@@ -19,7 +19,7 @@ function Distributions.logpdf(dist::KernelNormal{T}, x) where {T}
     ℓ - log(dist.σ) - log(sqrt(T(2π)))
 end
 
-Base.rand(rng::AbstractRNG, dist::KernelNormal{T}) where {T} = dist.σ * randn(rng, T) + dist.μ
+Base.rand_kernel(rng::AbstractRNG, dist::KernelNormal{T}) where {T} = dist.σ * randn(rng, T) + dist.μ
 
 Base.maximum(::KernelNormal{T}) where {T} = typemax(T)
 Base.minimum(::KernelNormal{T}) where {T} = typemin(T)
