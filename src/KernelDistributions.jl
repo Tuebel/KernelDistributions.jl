@@ -35,6 +35,7 @@ using DensityInterface
 using LogExpFunctions
 using Random
 using Random123: Philox2x, set_counter!
+using StatsFuns
 
 # TODO At one point most of the distributions could be replaced with Distributions.jl. Mixtures could be problematic.
 # TODO should open a pull request to fix type of https://github.com/JuliaStats/Distributions.jl/blob/d19ac4526bab2584a84323eea4af92805f99f034/src/univariate/continuous/uniform.jl#L120
@@ -57,13 +58,17 @@ const KernelOrKernelArray = Union{KernelOrTransformedKernel,AbstractArray{<:Kern
 
 include("Array.jl")
 include("Scalar.jl")
+
+include("Bijectors.jl")
+include("Distributions.jl")
+
 include("KernelExponential.jl")
 include("KernelNormal.jl")
-include("Distributions.jl")
 
 export AbstractKernelDistribution
 export KernelExponential
 export KernelNormal
+export ZeroIdentity
 
 using Reexport
 @reexport import DensityInterface: logdensityof

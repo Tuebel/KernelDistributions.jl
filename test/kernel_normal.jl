@@ -4,26 +4,26 @@
 
 @testset "KernelNormal, RNG: $rng" for rng in rngs
     # Scalar
-    d = @inferred KernelNormal(1, 1.0)
+    d = @inferred KernelNormal(2, 1.0)
     x = @inferred rand(rng, d)
     @test x isa Float64
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = KernelNormal(1, Float16(1))
+    d = KernelNormal(2, Float16(1))
     x = @inferred rand(rng, d)
     @test x isa Float16
     l = @inferred logdensityof(d, x)
     @test l isa Float16
 
     # Array
-    d = KernelNormal(1, 1.0)
+    d = KernelNormal(2, 1.1)
     x = @inferred rand(rng, d, 3)
     @test x isa AbstractVector{Float64}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = KernelNormal(1, Float16(1))
+    d = KernelNormal(2, Float16(1))
     x = @inferred rand(rng, d, 3)
     @test x isa AbstractVector{Float16}
     l = @inferred logdensityof(d, x)
@@ -40,54 +40,55 @@ end
     @test logcdf(dist, 1.0) == logcdf(kern, 1.0)
     @test logcdf(dist, 0.0) == logcdf(kern, 0.0)
     @test logcdf(dist, -1.0) == logcdf(kern, -1.0)
-    @test_throws DomainError invlogcdf(dist, 0.1)
+    @test isnan(invlogcdf(kern, 0.1))
     @test invlogcdf(dist, 0.0) == invlogcdf(kern, 0.0)
     @test invlogcdf(dist, -1.0) == invlogcdf(kern, -1.0)
 end
 
 @testset "KernelNormal Bijectors" begin
     @test maximum(KernelNormal(Float16)) == Inf16
-    @test minimum(KernelNormal(Float16)) == 0
+    @test minimum(KernelNormal(Float16)) == -Inf16
     @test insupport(KernelNormal(Float16), 0)
     @test insupport(KernelNormal(Float16), Inf)
-    @test !insupport(KernelNormal(Float16), -eps(Float16))
-    @test bijector(KernelNormal()) == bijector(Normal())
+    @test insupport(KernelNormal(Float16), -Inf)
+    @test bijector(KernelNormal()) == ZeroIdentity()
 end
 
 @testset "KernelNormal Truncated, RNG: $rng" for rng in rngs
     # Scalar
-    d = truncated(KernelNormal(1, 1.0), 1.0, 2.0)
+    d = truncated(KernelNormal(2, 1.1), 1.0, 2.0)
     x = @inferred rand(rng, d)
     @test x isa Float64
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = truncated(KernelNormal(1, Float16(1)), Float16(1), Float16(2))
+    d = truncated(KernelNormal(2, Float16(1)), Float16(1), Float16(2))
     x = @inferred rand(rng, d)
     @test x isa Float16
     l = @inferred logdensityof(d, x)
     @test l isa Float16
 
     # Array
-    d = truncated(KernelNormal(1, 1.0), 1.0, 2.0)
+    d = truncated(KernelNormal(2, 1.1), 1.0, 2.0)
     x = @inferred rand(rng, d, 420)
     @test x isa AbstractVector{Float64}
     @test 1 <= minimum(x) < maximum(x) <= 2
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = truncated(KernelNormal(1, Float16(1)), Float16(1), Float16(2))
+    # Float32 instead of Float16 because it might fail due to the precision
+    d = truncated(KernelNormal(2, Float32(1)), Float32(1), Float32(2))
     x = @inferred rand(rng, d, 420)
-    @test x isa AbstractVector{Float16}
+    @test x isa AbstractVector{Float32}
     @test 1 <= minimum(x) < maximum(x) <= 2
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "KernelNormal Truncated vs. Distributions.jl" begin
     # Compare to Distributions.jl
-    dist = truncated(Normal(1, 1.0), 1.0, 2.0)
-    kern = truncated(KernelNormal(1, 1.0), 1.0, 2.0)
+    dist = truncated(Normal(2, 1.1), 1.0, 2.0)
+    kern = truncated(KernelNormal(2, 1.1), 1.0, 2.0)
 
     @test logdensityof(kern, 0.9) == logdensityof(dist, 0.9)
     @test logdensityof(kern, 1.0) == logdensityof(dist, 1.0)
@@ -98,27 +99,27 @@ end
 
 @testset "KernelNormal Transformed, RNG: $rng" for rng in rngs
     # Scalar
-    d = transformed(KernelNormal(1, 1.0))
+    d = transformed(KernelNormal(2, 1.1))
     x = @inferred rand(rng, d)
     @test x isa Float64
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = transformed(KernelNormal(Float16(1)))
+    d = transformed(KernelNormal(2, Float16(1)))
     x = @inferred rand(rng, d)
     @test x isa Float16
     l = @inferred logdensityof(d, x)
     @test l isa Float16
 
     # Array
-    d = transformed(KernelNormal(1.0))
+    d = transformed(KernelNormal(2, 1.1))
     x = @inferred rand(rng, d, 420)
     @test x isa AbstractVector{Float64}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = transformed(KernelNormal(Float16(1)))
+    d = transformed(KernelNormal(2, Float16(1)))
     x = @inferred rand(rng, d, 420)
     @test x isa AbstractVector{Float16}
     @test minimum(x) < 0 < maximum(x)
@@ -128,8 +129,8 @@ end
 
 @testset "KernelNormal Transformed vs. Distributions.jl" begin
     # Compare to Distributions.jl
-    dist = transformed(Normal(3.0))
-    kern = transformed(KernelNormal(3.0))
+    dist = transformed(Normal(2, 1.1))
+    kern = transformed(KernelNormal(2, 1.1))
 
     @test logdensityof(kern, 0.9) == logdensityof(dist, 0.9)
     @test logdensityof(kern, 1.0) == logdensityof(dist, 1.0)
