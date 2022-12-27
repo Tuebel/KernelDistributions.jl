@@ -63,6 +63,7 @@ include("Distributions.jl")
 
 export AbstractKernelDistribution
 export KernelExponential
+export KernelNormal
 
 using Reexport
 @reexport import DensityInterface: logdensityof

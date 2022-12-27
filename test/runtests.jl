@@ -18,6 +18,5 @@ if CUDA.functional()
     rngs = [rngs..., curng]
 end
 
-
 include("kernel_exponential.jl")
-
+include("kernel_normal.jl")
