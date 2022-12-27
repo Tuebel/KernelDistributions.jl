@@ -62,6 +62,7 @@ include("Scalar.jl")
 include("Bijectors.jl")
 include("Distributions.jl")
 
+include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
 include("TailUniform.jl")
@@ -69,6 +70,7 @@ include("TailUniform.jl")
 export AbstractKernelDistribution
 
 # Distributions
+export KernelDirac
 export KernelExponential
 export KernelNormal
 export TailUniform
