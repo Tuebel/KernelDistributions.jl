@@ -10,11 +10,14 @@ default:
 test:
   stage: test
   script:
-    - apt update && apt install -y python3-pip
+    - apt update && apt install -y python3-pip lcov
     - pip install lcov_cobertura
-    - julia --project=@. -e 'using Pkg; Pkg.add("LocalCoverage"); using LocalCoverage; cov = generate_coverage("KernelDistributions"; run_test = true); generate_xml(cov, "coverage.xml"); report_coverage_and_exit(cov; target_coverage=40);'
+    - julia --project=@. -e 'using Pkg; Pkg.add("LocalCoverage"); using LocalCoverage; cov = generate_coverage("KernelDistributions"; run_test = true); generate_xml(cov, "coverage.xml"); html_coverage(cov; dir="coverage_html"); report_coverage_and_exit(cov; target_coverage=80);'
   coverage: '/TOTAL.*│\s*(\d+)\%/'
   artifacts:
+    paths:
+      - coverage/coverage.xml
+      - coverage_html
     reports:
       coverage_report:
         coverage_format: cobertura

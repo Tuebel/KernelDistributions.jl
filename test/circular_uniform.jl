@@ -10,24 +10,26 @@
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = CircularUniform(Float16)
+    d = CircularUniform(Float32)
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = CircularUniform(Float64)
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
+    @test 0 <= minimum(x) < maximum(x) <= 2π
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = CircularUniform(Float16)
-    x = @inferred rand(rng, d, 3)
-    @test x isa AbstractVector{Float16}
+    d = CircularUniform(Float32)
+    x = @inferred rand(rng, d, 4_200)
+    @test x isa AbstractVector{Float32}
+    @test 0 <= minimum(x) < maximum(x) <= 2π
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "CircularUniform logdensityof" begin
@@ -41,12 +43,12 @@ end
 end
 
 @testset "CircularUniform Bijectors" begin
-    @test maximum(CircularUniform(Float16)) == Float16(2π)
-    @test minimum(CircularUniform(Float16)) == 0
-    @test insupport(CircularUniform(Float16), 0)
-    @test insupport(CircularUniform(Float16), Float16(2π))
-    @test !insupport(CircularUniform(Float16), -0.01)
-    @test !insupport(CircularUniform(Float16), Float16(2π + 0.01))
+    @test maximum(CircularUniform(Float32)) == Float32(2π)
+    @test minimum(CircularUniform(Float32)) == 0
+    @test insupport(CircularUniform(Float32), 0)
+    @test insupport(CircularUniform(Float32), Float32(2π))
+    @test !insupport(CircularUniform(Float32), -0.01)
+    @test !insupport(CircularUniform(Float32), Float32(2π + 0.01))
     @test bijector(CircularUniform()) == Circular()
 end
 
@@ -58,26 +60,26 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = transformed(CircularUniform(Float16))
+    d = transformed(CircularUniform(Float32))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = transformed(CircularUniform(Float64))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
     @test 0 <= minimum(x) < maximum(x) <= 2π
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = transformed(CircularUniform(Float16))
-    x = @inferred rand(rng, d, 420)
-    @test x isa AbstractVector{Float16}
+    d = transformed(CircularUniform(Float32))
+    x = @inferred rand(rng, d, 4_200)
+    @test x isa AbstractVector{Float32}
     @test 0 <= minimum(x) < maximum(x) <= 2π
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "CircularUniform Transformed vs. Distributions.jl" begin

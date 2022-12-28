@@ -10,24 +10,26 @@
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = KernelDirac(Float16(2))
+    d = KernelDirac(Float32(2))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = KernelDirac(2.0)
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
+    @test minimum(x) == 2 == maximum(x)
     @test x isa AbstractVector{Float64}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = KernelDirac(Float16(2))
-    x = @inferred rand(rng, d, 3)
-    @test x isa AbstractVector{Float16}
+    d = KernelDirac(Float32(2))
+    x = @inferred rand(rng, d, 4_200)
+    @test minimum(x) == 2 == maximum(x)
+    @test x isa AbstractVector{Float32}
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "KernelDirac vs. Distributions" begin
@@ -39,11 +41,11 @@ end
 end
 
 @testset "KernelDirac Bijectors" begin
-    @test maximum(KernelDirac(Float16(3))) == 3
-    @test minimum(KernelDirac(Float16(3))) == 3
-    @test insupport(KernelDirac(Float16(3)), 3)
-    @test !insupport(KernelDirac(Float16(3)), Inf)
-    @test !insupport(KernelDirac(Float16(3)), 2.9)
+    @test maximum(KernelDirac(Float32(3))) == 3
+    @test minimum(KernelDirac(Float32(3))) == 3
+    @test insupport(KernelDirac(Float32(3)), 3)
+    @test !insupport(KernelDirac(Float32(3)), Inf)
+    @test !insupport(KernelDirac(Float32(3)), 2.9)
     @test bijector(KernelDirac(2)) == ZeroIdentity()
 end
 
@@ -55,26 +57,26 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = transformed(KernelDirac(Float16(2)))
+    d = transformed(KernelDirac(Float32(2)))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = transformed(KernelDirac(2.0))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
     @test minimum(x) == 2 == maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = transformed(KernelDirac(Float16(2)))
-    x = @inferred rand(rng, d, 420)
-    @test x isa AbstractVector{Float16}
+    d = transformed(KernelDirac(Float32(2)))
+    x = @inferred rand(rng, d, 4_200)
+    @test x isa AbstractVector{Float32}
     @test minimum(x) == 2 == maximum(x)
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "KernelDirac Transformed vs. Distributions.jl" begin
