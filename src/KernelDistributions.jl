@@ -67,6 +67,7 @@ include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
 include("TailUniform.jl")
+include("Uniform.jl")
 
 export AbstractKernelDistribution
 
@@ -76,6 +77,7 @@ export KernelDirac
 export KernelExponential
 export KernelNormal
 export TailUniform
+export KernelUniform
 
 # Bijectors
 export Circular

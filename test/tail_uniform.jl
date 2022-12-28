@@ -34,7 +34,7 @@ end
     kern = TailUniform(2.0, 3.0)
 
     @test logdensityof(kern, -Inf) == 0
-    @test logdensityof(kern, 0.9) == 0
+    @test logdensityof(kern, 1.9) == 0
     @test logdensityof(kern, 2.0) == 0
     @test logdensityof(kern, 2.1) == 0
     @test logdensityof(kern, 2.9) == 0
@@ -84,11 +84,10 @@ end
 
 @testset "TailUniform Transformed vs. Distributions.jl" begin
     # Compare to Distributions.jl
-    dist = transformed(Uniform(2.0, 3.0))
     kern = transformed(TailUniform(2.0, 3.0))
 
     @test logdensityof(kern, -Inf) == 0
-    @test logdensityof(kern, 0.9) == 0
+    @test logdensityof(kern, 1.9) == 0
     @test logdensityof(kern, 2.0) == 0
     @test logdensityof(kern, 2.1) == 0
     @test logdensityof(kern, 2.9) == 0
