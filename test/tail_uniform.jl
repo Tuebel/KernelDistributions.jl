@@ -104,4 +104,9 @@ end
     @test logdensityof(kern, 3.0) == 0
     @test logdensityof(kern, 3.1) == 0
     @test logdensityof(kern, Inf) == 0
+
+    b = bijector(kern)
+    @test logabsdetjac(b, -Inf) == 0
+    @test logabsdetjac(b, 2.5) == 0
+    @test logabsdetjac(b, Inf) == 0
 end

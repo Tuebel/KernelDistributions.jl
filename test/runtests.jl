@@ -5,6 +5,7 @@
 using Bijectors
 using CUDA
 using KernelDistributions
+using Quaternions
 using Random
 using Test
 
@@ -25,5 +26,6 @@ include("circular_uniform.jl")
 include("dirac.jl")
 include("exponential.jl")
 include("normal.jl")
+include("quaternion_uniform.jl")
 include("tail_uniform.jl")
 include("uniform.jl")

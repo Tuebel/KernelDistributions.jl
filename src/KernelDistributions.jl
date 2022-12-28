@@ -32,6 +32,7 @@ using Bijectors
 using CUDA
 using DensityInterface
 using LogExpFunctions
+using Quaternions
 using Random
 using Random123: Philox2x, set_counter!
 using StatsFuns
@@ -66,6 +67,7 @@ include("CircularUniform.jl")
 include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
+include("QuaternionUniform.jl")
 include("TailUniform.jl")
 include("Uniform.jl")
 
@@ -77,8 +79,9 @@ export CircularUniform
 export KernelDirac
 export KernelExponential
 export KernelNormal
-export TailUniform
 export KernelUniform
+export QuaternionUniform
+export TailUniform
 
 # Bijectors
 export Circular

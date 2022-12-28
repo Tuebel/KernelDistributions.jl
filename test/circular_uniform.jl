@@ -94,4 +94,9 @@ end
     @test logdensityof(kern, 2π) == log(1 / 2π)
     @test logdensityof(kern, 2π + 0.01) == log(1 / 2π)
     @test logdensityof(kern, Inf) == -Inf
+
+    b = bijector(kern)
+    @test logabsdetjac(b, -Inf) == 0
+    @test logabsdetjac(b, 2.5) == 0
+    @test logabsdetjac(b, Inf) == 0
 end
