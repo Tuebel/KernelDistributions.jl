@@ -18,14 +18,16 @@
 
     # Array
     d = @inferred BinaryMixture(KernelExponential(2.0), KernelUniform(3.0, 4.0), 3.0, 1.0)
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
+    @test 0 < minimum(x) < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = @inferred BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), Float16(1))
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
+    @test 0 < minimum(x) < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
 end
@@ -68,14 +70,14 @@ end
 
     # Array
     d = @inferred transformed(BinaryMixture(KernelExponential(2.0), KernelUniform(3.0, 4.0), 3.0, 1.0))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = @inferred transformed(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), Float16(1)))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)

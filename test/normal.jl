@@ -18,14 +18,16 @@
 
     # Array
     d = KernelNormal(2, 1.1)
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
+    @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = KernelNormal(2, Float16(1))
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
+    @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
 end
@@ -70,19 +72,19 @@ end
 
     # Array
     d = truncated(KernelNormal(2, 1.1), 1.0, 2.0)
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
     @test 1 <= minimum(x) < maximum(x) <= 2
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    # Float32 instead of Float16 because it might fail due to the precision
-    d = truncated(KernelNormal(2, Float32(1)), Float32(1), Float32(2))
-    x = @inferred rand(rng, d, 420)
-    @test x isa AbstractVector{Float32}
+    # Float16 instead of Float16 because it might fail due to the precision
+    d = truncated(KernelNormal(2, Float16(1)), Float16(1), Float16(2))
+    x = @inferred rand(rng, d, 4_200)
+    @test x isa AbstractVector{Float16}
     @test 1 <= minimum(x) < maximum(x) <= 2
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float32}
+    @test l isa AbstractVector{Float16}
 end
 
 @testset "KernelNormal Truncated vs. Distributions.jl" begin
@@ -113,14 +115,14 @@ end
 
     # Array
     d = transformed(KernelNormal(2, 1.1))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = transformed(KernelNormal(2, Float16(1)))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)

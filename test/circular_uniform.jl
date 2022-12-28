@@ -18,14 +18,16 @@
 
     # Array
     d = CircularUniform(Float64)
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
+    @test 0 < minimum(x) < maximum(x) < 2π
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = CircularUniform(Float16)
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
+    @test 0 < minimum(x) < maximum(x) < 2π
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
 end
@@ -66,16 +68,16 @@ end
 
     # Array
     d = transformed(CircularUniform(Float64))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
-    @test 0 <= minimum(x) < maximum(x) <= 2π
+    @test 0 < minimum(x) < maximum(x) < 2π
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = transformed(CircularUniform(Float16))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
-    @test 0 <= minimum(x) < maximum(x) <= 2π
+    @test 0 < minimum(x) < maximum(x) < 2π
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
 end

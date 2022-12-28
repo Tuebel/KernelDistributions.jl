@@ -18,13 +18,15 @@
 
     # Array
     d = KernelDirac(2.0)
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
+    @test minimum(x) == 2 == maximum(x)
     @test x isa AbstractVector{Float64}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = KernelDirac(Float16(2))
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
+    @test minimum(x) == 2 == maximum(x)
     @test x isa AbstractVector{Float16}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
@@ -63,14 +65,14 @@ end
 
     # Array
     d = transformed(KernelDirac(2.0))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
     @test minimum(x) == 2 == maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = transformed(KernelDirac(Float16(2)))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
     @test minimum(x) == 2 == maximum(x)
     l = @inferred logdensityof(d, x)

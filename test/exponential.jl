@@ -18,13 +18,15 @@
 
     # Array
     d = KernelExponential(2.0)
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
+    @test 0 <= minimum(x) < maximum(x)
     @test x isa AbstractVector{Float64}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = KernelExponential(Float16(2))
-    x = @inferred rand(rng, d, 3)
+    x = @inferred rand(rng, d, 4_200)
+    @test 0 <= minimum(x) < maximum(x)
     @test x isa AbstractVector{Float16}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
@@ -70,19 +72,18 @@ end
 
     # Array
     d = truncated(KernelExponential(2.0), 1.0, 2.0)
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
     @test 1 <= minimum(x) < maximum(x) <= 2
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    # Float32 instead of Float16 because it might fail due to the precision
-    d = truncated(KernelExponential(Float32(2)), Float32(1), Float32(2))
-    x = @inferred rand(rng, d, 420)
-    @test x isa AbstractVector{Float32}
+    d = truncated(KernelExponential(Float16(2)), Float16(1), Float16(2))
+    x = @inferred rand(rng, d, 4_200)
+    @test x isa AbstractVector{Float16}
     @test 1 <= minimum(x) < maximum(x) <= 2
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float32}
+    @test l isa AbstractVector{Float16}
 end
 
 @testset "KernelExponential Truncated vs. Distributions.jl" begin
@@ -113,14 +114,14 @@ end
 
     # Array
     d = transformed(KernelExponential(2.0))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = transformed(KernelExponential(Float16(2)))
-    x = @inferred rand(rng, d, 420)
+    x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
