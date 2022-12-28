@@ -19,14 +19,14 @@
     # Array
     d = KernelUniform(2.0, 3.0)
     x = @inferred rand(rng, d, 4_200)
-    @test 2 < minimum(x) < maximum(x) < 3
+    @test 2 <= minimum(x) < maximum(x) <= 3
     @test x isa AbstractVector{Float64}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = KernelUniform(Float16(2), Float16(3))
     x = @inferred rand(rng, d, 4_200)
-    @test 2 < minimum(x) < maximum(x) < 3
+    @test 2 <= minimum(x) < maximum(x) <= 3
     @test x isa AbstractVector{Float16}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
@@ -81,7 +81,7 @@ end
     d = transformed(KernelUniform(2.0, 3.0))
     x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
-    @test minimum(x) < 0 < maximum(x)
+    @test 2 <= minimum(x) < maximum(x) <= 3
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
@@ -89,7 +89,7 @@ end
     d = transformed(KernelUniform(Float16(2), Float16(3)))
     x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
-    @test minimum(x) < 0 < maximum(x)
+    @test 2 <= minimum(x) < maximum(x) <= 3
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
 end

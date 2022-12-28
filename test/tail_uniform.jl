@@ -19,14 +19,14 @@
     # Array
     d = TailUniform(2.0, 3.0)
     x = @inferred rand(rng, d, 4_200)
-    @test 2 < minimum(x) < maximum(x) < 3
+    @test 2 <= minimum(x) < maximum(x) <= 3
     @test x isa AbstractVector{Float64}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = TailUniform(Float16(2), Float16(3))
     x = @inferred rand(rng, d, 4_200)
-    @test 2 < minimum(x) < maximum(x) < 3
+    @test 2 <= minimum(x) < maximum(x) <= 3
     @test x isa AbstractVector{Float16}
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
@@ -72,14 +72,14 @@ end
     d = transformed(TailUniform(2.0, 3.0))
     x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
-    @test 2 < minimum(x) < maximum(x) < 3
+    @test 2 <= minimum(x) < maximum(x) <= 3
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
     d = transformed(TailUniform(Float16(2), Float16(3)))
     x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
-    @test 2 < minimum(x) < maximum(x) < 3
+    @test 2 <= minimum(x) < maximum(x) <= 3
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
 end
