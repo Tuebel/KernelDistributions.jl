@@ -27,7 +27,6 @@ Most of the time Float64 precision is not required, especially for GPU computati
 Thus, I default to Float32, mostly for memory capacity reasons.
 """
 module KernelDistributions
-greet() = print("KernelDistributions.jl greetings from Tim.")
 
 using Bijectors
 using CUDA
