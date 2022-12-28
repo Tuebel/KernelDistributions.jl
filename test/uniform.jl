@@ -81,7 +81,7 @@ end
     d = transformed(KernelUniform(2.0, 3.0))
     x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float64}
-    @test 2 <= minimum(x) < maximum(x) <= 3
+    @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
@@ -89,7 +89,7 @@ end
     d = transformed(KernelUniform(Float16(2), Float16(3)))
     x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float16}
-    @test 2 <= minimum(x) < maximum(x) <= 3
+    @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float16}
 end
