@@ -4,7 +4,7 @@
 
 @testset "TailUniform, RNG: $rng" for rng in rngs
     # Scalar
-    d = @inferred TailUniform(2.0, 3.0)
+    d = @inferred TailUniform(2, 3.0)
     x = @inferred rand(rng, d)
     @test x isa Float64
     l = @inferred logdensityof(d, x)
@@ -32,8 +32,9 @@
     @test l isa AbstractVector{Float32}
 end
 
-@testset "TailUniform logdensityof" begin
+@testset "TailUniform vs. Distributions.jl" begin
     kern = TailUniform(2.0, 3.0)
+    dist = Uniform(2.0, 3.0)
 
     @test logdensityof(kern, -Inf) == 0
     @test logdensityof(kern, 1.9) == 0
@@ -43,6 +44,13 @@ end
     @test logdensityof(kern, 3.0) == 0
     @test logdensityof(kern, 3.1) == 0
     @test logdensityof(kern, Inf) == 0
+    @test logcdf(kern, 1.9) == logcdf(dist, 1.9)
+    @test logcdf(kern, 2.0) == logcdf(dist, 2.0)
+    @test logcdf(kern, 2.1) == logcdf(dist, 2.1)
+    @test logcdf(kern, 2.9) == logcdf(dist, 2.9)
+    @test logcdf(kern, 3.0) == logcdf(dist, 3.0)
+    @test logcdf(kern, 3.1) == logcdf(dist, 3.1)
+    @test logcdf(kern, Inf) == logcdf(dist, Inf)
 end
 
 @testset "TailUniform Bijectors" begin
