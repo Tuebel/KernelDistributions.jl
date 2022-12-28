@@ -62,6 +62,7 @@ include("Scalar.jl")
 include("Bijectors.jl")
 include("Distributions.jl")
 
+include("BinaryMixture.jl")
 include("CircularUniform.jl")
 include("Dirac.jl")
 include("Exponential.jl")
@@ -72,6 +73,7 @@ include("Uniform.jl")
 export AbstractKernelDistribution
 
 # Distributions
+export BinaryMixture
 export CircularUniform
 export KernelDirac
 export KernelExponential
