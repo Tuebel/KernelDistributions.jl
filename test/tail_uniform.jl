@@ -87,7 +87,6 @@ end
     dist = transformed(Uniform(2.0, 3.0))
     kern = transformed(TailUniform(2.0, 3.0))
 
-
     @test logdensityof(kern, -Inf) == 0
     @test logdensityof(kern, 0.9) == 0
     @test logdensityof(kern, 2.0) == 0
