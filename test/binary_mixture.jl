@@ -10,11 +10,11 @@
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = @inferred BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), Float16(1))
+    d = @inferred BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), Float32(1))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = @inferred BinaryMixture(KernelExponential(2.0), KernelUniform(3.0, 4.0), 3.0, 1.0)
@@ -24,12 +24,12 @@
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = @inferred BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), Float16(1))
+    d = @inferred BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), Float32(1))
     x = @inferred rand(rng, d, 4_200)
-    @test x isa AbstractVector{Float16}
+    @test x isa AbstractVector{Float32}
     @test 0 < minimum(x) < maximum(x)
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "BinaryMixture vs. Distributions.jl" begin
@@ -46,12 +46,12 @@ end
 end
 
 @testset "BinaryMixture Bijectors" begin
-    @test maximum(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), 1)) == Inf16
-    @test minimum(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), 1)) == 0
-    @test insupport(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), 1), 0)
-    @test insupport(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), 1), Inf)
-    @test !insupport(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), 1), -eps(Float16))
-    @test bijector(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), 1)) == Bijectors.TruncatedBijector(0, Inf16)
+    @test maximum(BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), 1)) == Inf16
+    @test minimum(BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), 1)) == 0
+    @test insupport(BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), 1), 0)
+    @test insupport(BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), 1), Inf)
+    @test !insupport(BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), 1), -eps(Float32))
+    @test bijector(BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), 1)) == Bijectors.TruncatedBijector(0, Inf16)
 end
 
 @testset "BinaryMixture Transformed, RNG: $rng" for rng in rngs
@@ -62,11 +62,11 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = @inferred transformed(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), Float16(1)))
+    d = @inferred transformed(BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), Float32(1)))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = @inferred transformed(BinaryMixture(KernelExponential(2.0), KernelUniform(3.0, 4.0), 3.0, 1.0))
@@ -76,12 +76,12 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = @inferred transformed(BinaryMixture(KernelExponential(Float16(2)), KernelUniform(Float16(3), Float16(4)), Float16(3), Float16(1)))
+    d = @inferred transformed(BinaryMixture(KernelExponential(Float32(2)), KernelUniform(Float32(3), Float32(4)), Float32(3), Float32(1)))
     x = @inferred rand(rng, d, 4_200)
-    @test x isa AbstractVector{Float16}
+    @test x isa AbstractVector{Float32}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "BinaryMixture Transformed vs. Distributions.jl" begin

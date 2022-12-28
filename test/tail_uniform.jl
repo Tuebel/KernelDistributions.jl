@@ -10,11 +10,11 @@
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = TailUniform(Float16(2), Float16(3))
+    d = TailUniform(Float32(2), Float32(3))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = TailUniform(2.0, 3.0)
@@ -24,12 +24,12 @@
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = TailUniform(Float16(2), Float16(3))
+    d = TailUniform(Float32(2), Float32(3))
     x = @inferred rand(rng, d, 4_200)
     @test 2 <= minimum(x) < maximum(x) <= 3
-    @test x isa AbstractVector{Float16}
+    @test x isa AbstractVector{Float32}
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "TailUniform logdensityof" begin
@@ -46,11 +46,11 @@ end
 end
 
 @testset "TailUniform Bijectors" begin
-    @test maximum(TailUniform(Float16)) == Inf16
-    @test minimum(TailUniform(Float16)) == -Inf16
-    @test insupport(TailUniform(Float16), 0)
-    @test insupport(TailUniform(Float16), Inf)
-    @test insupport(TailUniform(Float16), -Inf)
+    @test maximum(TailUniform(Float32)) == Inf16
+    @test minimum(TailUniform(Float32)) == -Inf16
+    @test insupport(TailUniform(Float32), 0)
+    @test insupport(TailUniform(Float32), Inf)
+    @test insupport(TailUniform(Float32), -Inf)
     @test bijector(TailUniform()) == ZeroIdentity()
 end
 
@@ -62,11 +62,11 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = transformed(TailUniform(Float16(2), Float16(3)))
+    d = transformed(TailUniform(Float32(2), Float32(3)))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = transformed(TailUniform(2.0, 3.0))
@@ -76,12 +76,12 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = transformed(TailUniform(Float16(2), Float16(3)))
+    d = transformed(TailUniform(Float32(2), Float32(3)))
     x = @inferred rand(rng, d, 4_200)
-    @test x isa AbstractVector{Float16}
+    @test x isa AbstractVector{Float32}
     @test 2 <= minimum(x) < maximum(x) <= 3
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "TailUniform Transformed vs. Distributions.jl" begin

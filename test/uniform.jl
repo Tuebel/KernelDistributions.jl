@@ -10,11 +10,11 @@
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = KernelUniform(Float16(2), Float16(3))
+    d = KernelUniform(Float32(2), Float32(3))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = KernelUniform(2.0, 3.0)
@@ -24,12 +24,12 @@
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    d = KernelUniform(Float16(2), Float16(3))
+    d = KernelUniform(Float32(2), Float32(3))
     x = @inferred rand(rng, d, 4_200)
     @test 2 <= minimum(x) < maximum(x) <= 3
-    @test x isa AbstractVector{Float16}
+    @test x isa AbstractVector{Float32}
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "KernelUniform vs Distributions.jl" begin
@@ -54,12 +54,12 @@ end
 end
 
 @testset "KernelUniform Bijectors" begin
-    @test maximum(KernelUniform(Float16)) == 1
-    @test minimum(KernelUniform(Float16)) == 0
-    @test insupport(KernelUniform(Float16), 0)
-    @test insupport(KernelUniform(Float16), 1)
-    @test !insupport(KernelUniform(Float16), -0.1)
-    @test !insupport(KernelUniform(Float16), -1.1)
+    @test maximum(KernelUniform(Float32)) == 1
+    @test minimum(KernelUniform(Float32)) == 0
+    @test insupport(KernelUniform(Float32), 0)
+    @test insupport(KernelUniform(Float32), 1)
+    @test !insupport(KernelUniform(Float32), -0.1)
+    @test !insupport(KernelUniform(Float32), -1.1)
     @test bijector(KernelUniform(2.0, 3.0)) == bijector(Uniform(2.0, 3.0))
 end
 
@@ -71,11 +71,11 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = transformed(KernelUniform(Float16(2), Float16(3)))
+    d = transformed(KernelUniform(Float32(2), Float32(3)))
     x = @inferred rand(rng, d)
-    @test x isa Float16
+    @test x isa Float32
     l = @inferred logdensityof(d, x)
-    @test l isa Float16
+    @test l isa Float32
 
     # Array
     d = transformed(KernelUniform(2.0, 3.0))
@@ -85,13 +85,12 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    # Float16 fails due to precision
-    d = transformed(KernelUniform(Float16(2), Float16(3)))
+    d = transformed(KernelUniform(Float32(2), Float32(3)))
     x = @inferred rand(rng, d, 4_200)
-    @test x isa AbstractVector{Float16}
+    @test x isa AbstractVector{Float32}
     @test minimum(x) < 0 < maximum(x)
     l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float16}
+    @test l isa AbstractVector{Float32}
 end
 
 @testset "KernelUniform Transformed vs. Distributions.jl" begin
