@@ -42,6 +42,7 @@ end
     kern = QuaternionUniform(Float64)
 
     @test logdensityof(kern, zero(Quaternion)) == -log(π^2)
+    @test logdensityof(kern, fill(zero(Quaternion), 42)) == fill(-log(π^2), 42)
     @test logdensityof(kern, Quaternion(1.0, 2.0, 3.0, 4.0)) == -log(π^2)
 end
 
@@ -89,11 +90,20 @@ end
     # Compare to Distributions.jl
     kern = transformed(QuaternionUniform(Float64))
 
-    @test logdensityof(kern, zero(Quaternion)) == -log(π^2)
-    @test logdensityof(kern, Quaternion(1.0, 2.0, 3.0, 4.0)) == -log(π^2)
+    # Identity bijector → no logjac correction
+    q = zero(Quaternion)
+    @test logdensityof(kern, q) == -log(π^2)
+    q = rand(kern)
+    @test logdensityof(kern, q) == -log(π^2)
+    @test logdensityof(kern, fill(q, 42)) == fill(-log(π^2), 42)
 
     b = bijector(kern)
-    @test logabsdetjac(b, -Inf) == 0
-    @test logabsdetjac(b, 2.5) == 0
-    @test logabsdetjac(b, Inf) == 0
+    q = rand(kern)
+    @test logabsdetjac(b, q) == 0
+    q = rand(kern, 42)
+    @test logabsdetjac(b, q) == 0
+    q = zero(Quaternion)
+    @test logabsdetjac(b, q) == 0
+    q = fill(q, 42)
+    @test logabsdetjac(b, q) == 0
 end

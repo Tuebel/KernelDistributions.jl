@@ -53,35 +53,46 @@ const KernelOrTransformedKernel{T} = Union{AbstractKernelDistribution{T},Univari
 
 const KernelOrKernelArray = Union{KernelOrTransformedKernel,AbstractArray{<:KernelOrTransformedKernel}}
 
-# TODO does eltype make sense for distributions?
-# Base.eltype(::Type{<:KernelOrTransformedKernel{T}}) where {T} = T
-
+# General
 include("Array.jl")
 include("Scalar.jl")
 
+# Specialization / Overrides
 include("Bijectors.jl")
 include("Distributions.jl")
 
+# Standard distributions
 include("BinaryMixture.jl")
-include("CircularUniform.jl")
 include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
-include("QuaternionUniform.jl")
-include("TailUniform.jl")
 include("Uniform.jl")
+
+# Special uniform
+include("TailUniform.jl")
+include("CircularUniform.jl")
+
+# Quaternions
+include("QuaternionUniform.jl")
+include("QuaternionPerturbation.jl")
 
 export AbstractKernelDistribution
 
-# Distributions
+# Standard distributions
 export BinaryMixture
-export CircularUniform
 export KernelDirac
 export KernelExponential
 export KernelNormal
 export KernelUniform
-export QuaternionUniform
+
+# Special uniform
+export CircularUniform
 export TailUniform
+
+# Quaternions
+export AdditiveQuaternion
+export QuaternionPerturbation
+export QuaternionUniform
 
 # Bijectors
 export Circular
