@@ -43,6 +43,10 @@ not_identity(q::AdditiveQuaternion) = q.q != Quaternion(1, 0, 0, 0)
 end
 
 @testset "QuaternionPerturbation logdensityof" begin
+    # Normalization approximation
+    ϕ = rand(KernelNormal(0, Float32(σ)), 3)
+    @test isapprox(qrotation(ϕ), KernelDistributions.approx_qrotation(ϕ...))
+
     kern = QuaternionPerturbation(σ)
 
     q = AdditiveQuaternion(zero(Quaternion))
