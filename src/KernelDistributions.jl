@@ -29,6 +29,7 @@ Thus, I default to Float32, mostly for memory capacity reasons.
 module KernelDistributions
 
 using Bijectors
+using Base.Broadcast: broadcasted, materialize, Broadcasted
 using CUDA
 using DensityInterface
 using LogExpFunctions
@@ -67,20 +68,26 @@ include("BinaryMixture.jl")
 include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
-include("QuaternionUniform.jl")
-include("SmoothExponential.jl")
-include("TailUniform.jl")
 include("Uniform.jl")
 
-# Special uniform
+# Special
+include("BroadcastedDistribution.jl")
 include("TailUniform.jl")
 include("CircularUniform.jl")
-
-# Quaternions
 include("QuaternionUniform.jl")
 include("QuaternionPerturbation.jl")
+include("SmoothExponential.jl")
 
 export AbstractKernelDistribution
+
+# Array
+export array_for_rng
+export sum_and_dropdims
+
+# Bijectors
+export BroadcastedBijector
+export Circular
+export ZeroIdentity
 
 # Standard distributions
 export BinaryMixture
@@ -89,20 +96,15 @@ export KernelExponential
 export KernelNormal
 export KernelUniform
 
-# Special uniform
+# Special
+export AdditiveQuaternion
+export BroadcastedDistribution
 export CircularUniform
+export QuaternionPerturbation
+export QuaternionUniform
 export QuaternionUniform
 export SmoothExponential
 export TailUniform
-
-# Quaternions
-export AdditiveQuaternion
-export QuaternionPerturbation
-export QuaternionUniform
-
-# Bijectors
-export Circular
-export ZeroIdentity
 
 using Reexport
 @reexport import DensityInterface: logdensityof

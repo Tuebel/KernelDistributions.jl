@@ -78,7 +78,6 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    # Fails for Float32
     d = truncated(KernelExponential(Float32(2)), Float32(1), Float32(2))
     x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float32}

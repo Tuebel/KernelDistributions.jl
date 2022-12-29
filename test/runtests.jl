@@ -18,10 +18,11 @@ curng = CUDA.default_rng()
 Random.seed!(curng, 42)
 rngs = [cpurng, curng]
 
-
 # BUG CUDA does weird stuff (wrong calculations, minimum is always 0.0) only on my laptop during Pkg.test() not when include("runtests.jl")
+CUDA.allowscalar(false)
 
 include("binary_mixture.jl")
+include("broadcasted.jl")
 include("circular_uniform.jl")
 include("dirac.jl")
 include("exponential.jl")
