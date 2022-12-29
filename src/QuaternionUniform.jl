@@ -39,5 +39,4 @@ Bijectors.bijector(::QuaternionUniform) = ZeroIdentity()
 Distributions.logpdf(td::UnivariateTransformed{<:QuaternionUniform}, x::Quaternion) = logpdf(td.dist, x)
 # Logjact is 0 not Quaternion(0,0,0,0)
 Bijectors.logabsdetjac(::ZeroIdentity, x::Union{Quaternion{T},AbstractArray{<:Quaternion{T}}}) where {T} = zero(T)
-Bijectors.logabsdetjac(::Inverse{<:ZeroIdentity}, x::Union{Quaternion{T},AbstractArray{<:Quaternion{T}}}) where {T} = zero(T)
 
