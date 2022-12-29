@@ -104,6 +104,8 @@ end
     @test logabsdetjac(b, q) == 0
     q = zero(Quaternion)
     @test logabsdetjac(b, q) == 0
+    @test logabsdetjac(inverse(b), q) == 0
     q = fill(q, 42)
     @test logabsdetjac(b, q) == 0
+    @test logabsdetjac(inverse(b), q) == 0
 end
