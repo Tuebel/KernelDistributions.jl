@@ -12,12 +12,10 @@ using Test
 # Setup a list of rngs to loop over
 cpurng = Random.default_rng()
 Random.seed!(cpurng, 42)
-rngs = [cpurng]
-if CUDA.functional()
-    curng = CUDA.default_rng()
-    Random.seed!(curng, 42)
-    rngs = [rngs..., curng]
-end
+curng = CUDA.default_rng()
+Random.seed!(curng, 42)
+rngs = [cpurng, curng]
+
 
 # BUG CUDA does weird stuff (wrong calculations, minimum is always 0.0) only on my laptop during Pkg.test() not when include("runtests.jl")
 

@@ -109,4 +109,6 @@ end
     @test logabsdetjac(b, -Inf) == 0
     @test logabsdetjac(b, 2.5) == 0
     @test logabsdetjac(b, Inf) == 0
+    @test logabsdetjac(b, [1, 2, 3]) == 0
+    @test logabsdetjac(inverse(b), [1, 2, 3]) == 0
 end
