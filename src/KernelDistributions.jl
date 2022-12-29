@@ -35,6 +35,7 @@ using LogExpFunctions
 using Quaternions
 using Random
 using Random123: Philox2x, set_counter!
+using SpecialFunctions
 using StatsFuns
 
 # TODO At one point most of the distributions could be replaced with Distributions.jl. Mixtures could be problematic.
