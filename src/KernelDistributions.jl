@@ -68,6 +68,7 @@ include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
 include("QuaternionUniform.jl")
+include("SmoothExponential.jl")
 include("TailUniform.jl")
 include("Uniform.jl")
 
@@ -81,6 +82,7 @@ export KernelExponential
 export KernelNormal
 export KernelUniform
 export QuaternionUniform
+export SmoothExponential
 export TailUniform
 
 # Bijectors
