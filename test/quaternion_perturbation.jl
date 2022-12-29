@@ -6,6 +6,23 @@
 quatpert_logpdf(q::AdditiveQuaternion) = sum(logdensityof.(KernelNormal(0, σ), imag_part(q.q) .* 2))
 not_identity(q::AdditiveQuaternion) = q.q != Quaternion(1, 0, 0, 0)
 
+@testset "AdditiveQuaternion arithmetics" begin
+    # Normalization approximation
+    ϕ = rand(KernelNormal(0, Float32(σ)), 3)
+    q = KernelDistributions.approx_qrotation(ϕ...)
+    @test q ≈ qrotation(ϕ)
+
+    # Add & subtract
+    aq = AdditiveQuaternion(q)
+    res = Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0) + aq
+    @test res isa Quaternion{Float32}
+    @test res ≈ q
+    res = Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0) - aq
+    @test res isa Quaternion{Float32}
+    @test res ≈ Quaternion(real(q), -1 .* imag_part(q)...)
+    @test abs(aq) == abs(q)
+end
+
 @testset "QuaternionPerturbation, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred QuaternionPerturbation(σ)
@@ -43,10 +60,6 @@ not_identity(q::AdditiveQuaternion) = q.q != Quaternion(1, 0, 0, 0)
 end
 
 @testset "QuaternionPerturbation logdensityof" begin
-    # Normalization approximation
-    ϕ = rand(KernelNormal(0, Float32(σ)), 3)
-    @test isapprox(qrotation(ϕ), KernelDistributions.approx_qrotation(ϕ...))
-
     kern = QuaternionPerturbation(σ)
 
     q = AdditiveQuaternion(zero(Quaternion))
