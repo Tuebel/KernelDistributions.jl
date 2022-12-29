@@ -48,8 +48,8 @@ end
 end
 
 @testset "KernelExponential Bijectors" begin
-    @test maximum(KernelExponential(Float32)) == Inf16
-    @test minimum(KernelExponential(Float32)) == 0
+    @test isinf(maximum(KernelExponential(Float32)))
+    @test iszero(minimum(KernelExponential(Float32)))
     @test insupport(KernelExponential(Float32), 0)
     @test insupport(KernelExponential(Float32), Inf)
     @test !insupport(KernelExponential(Float32), -eps(Float32))

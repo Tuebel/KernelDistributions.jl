@@ -7,6 +7,8 @@ using CUDA
 using KernelDistributions
 using Quaternions
 using Random
+using SpecialFunctions
+using StatsFuns
 using Test
 
 # Setup a list of rngs to loop over
