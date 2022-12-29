@@ -13,7 +13,7 @@ end
 Broadcast.broadcastable(q::AdditiveQuaternion) = Ref(q)
 Base.:+(a::Quaternion, b::AdditiveQuaternion) = robust_normalize(a * b.q)
 Base.:-(a::Quaternion, b::AdditiveQuaternion) = robust_normalize(a / b.q)
-abs(q::AdditiveQuaternion) = abs(q.q)
+Base.abs(q::AdditiveQuaternion) = abs(q.q)
 
 """
     approx_qrotation(x, y, z)
