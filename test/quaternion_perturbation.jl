@@ -17,9 +17,12 @@ not_identity(q::AdditiveQuaternion) = q.q != Quaternion(1, 0, 0, 0)
     res = Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0) + aq
     @test res isa Quaternion{Float32}
     @test res ≈ q
+    res = Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0) .+ fill(aq, 42)
+
     res = Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0) - aq
     @test res isa Quaternion{Float32}
     @test res ≈ Quaternion(real(q), -1 .* imag_part(q)...)
+
     @test abs(aq) == abs(q)
 end
 
