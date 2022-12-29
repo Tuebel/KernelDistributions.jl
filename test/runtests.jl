@@ -7,6 +7,8 @@ using CUDA
 using KernelDistributions
 using Quaternions
 using Random
+using SpecialFunctions
+using StatsFuns
 using Test
 
 # Setup a list of rngs to loop over
@@ -26,5 +28,6 @@ include("exponential.jl")
 include("normal.jl")
 include("quaternion_perturbation.jl")
 include("quaternion_uniform.jl")
+include("smooth_exponential.jl")
 include("tail_uniform.jl")
 include("uniform.jl")

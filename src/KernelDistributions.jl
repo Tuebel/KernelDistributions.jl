@@ -35,6 +35,7 @@ using LogExpFunctions
 using Quaternions
 using Random
 using Random123: Philox2x, set_counter!
+using SpecialFunctions
 using StatsFuns
 
 # TODO At one point most of the distributions could be replaced with Distributions.jl. Mixtures could be problematic.
@@ -66,6 +67,9 @@ include("BinaryMixture.jl")
 include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
+include("QuaternionUniform.jl")
+include("SmoothExponential.jl")
+include("TailUniform.jl")
 include("Uniform.jl")
 
 # Special uniform
@@ -87,6 +91,8 @@ export KernelUniform
 
 # Special uniform
 export CircularUniform
+export QuaternionUniform
+export SmoothExponential
 export TailUniform
 
 # Quaternions
