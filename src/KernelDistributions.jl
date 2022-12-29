@@ -66,6 +66,9 @@ include("BinaryMixture.jl")
 include("Dirac.jl")
 include("Exponential.jl")
 include("Normal.jl")
+include("QuaternionUniform.jl")
+include("SmoothExponential.jl")
+include("TailUniform.jl")
 include("Uniform.jl")
 
 # Special uniform
@@ -87,6 +90,8 @@ export KernelUniform
 
 # Special uniform
 export CircularUniform
+export QuaternionUniform
+export SmoothExponential
 export TailUniform
 
 # Quaternions
