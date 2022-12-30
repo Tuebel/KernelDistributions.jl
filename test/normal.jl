@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+@test KernelNormal(1, 2.0) |> show |> isnothing
+
 @testset "KernelNormal, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred KernelNormal(2, 1.0)

@@ -6,6 +6,8 @@
 quatpert_logpdf(q::AdditiveQuaternion) = sum(logdensityof.(KernelNormal(0, σ), imag_part(q.q) .* 2))
 not_identity(q::AdditiveQuaternion) = q.q != Quaternion(1, 0, 0, 0)
 
+@test QuaternionPerturbation(σ) |> show |> isnothing
+
 @testset "AdditiveQuaternion arithmetics" begin
     # Normalization approximation
     ϕ = rand(KernelNormal(0, Float32(σ)), 3)

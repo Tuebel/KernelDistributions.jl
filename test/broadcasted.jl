@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved.
 
+@test BroadcastedDistribution(KernelExponential, 2.0) |> show |> isnothing
+
 @testset "Product BroadcastedDistribution, RNG: $rng" for rng in rngs
     # Scalar single
     d = @inferred BroadcastedDistribution(KernelExponential, 2.0)

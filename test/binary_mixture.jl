@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+@test BinaryMixture(KernelExponential(2.0), KernelUniform(3.0, 4.0), 3.0, 1) |> show |> isnothing
+
 @testset "BinaryMixture, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred BinaryMixture(KernelExponential(2.0), KernelUniform(3.0, 4.0), 3.0, 1)

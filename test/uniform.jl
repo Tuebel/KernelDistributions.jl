@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+@test KernelUniform(2, 3.0) |> show |> isnothing
+
 @testset "KernelUniform, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred KernelUniform(2, 3.0)

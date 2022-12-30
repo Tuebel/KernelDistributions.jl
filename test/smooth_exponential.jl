@@ -14,6 +14,8 @@ smooth_pdf(min, max, θ, σ, z) = accurate_exp(min, max, θ, σ, z) * accurate_e
 # WARN numerically not stable for values far outside [min,max]
 smooth_logpdf = log ∘ smooth_pdf
 
+@test SmoothExponential(3.0, 7.0, 2.0, 0.1) |> show |> isnothing
+
 @testset "SmoothExponential, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred SmoothExponential(3.0, 7.0, 2.0, 0.1)

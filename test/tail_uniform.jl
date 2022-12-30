@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+@test TailUniform(2, 3.0) |> show |> isnothing
+
 @testset "TailUniform, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred TailUniform(2, 3.0)

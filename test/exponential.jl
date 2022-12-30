@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+@test KernelExponential(2.0) |> show |> isnothing
+
 @testset "KernelExponential, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred KernelExponential(2.0)
