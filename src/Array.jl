@@ -94,11 +94,10 @@ function device_rng(seed, counter)
 end
 
 """
-    sum_and_dropdims(A,[;] dims)
+    sum_and_dropdims(A, dims)
 Sum the matrix A over the given dimensions and drop the very same dimensions afterwards.
 In case of a matching number of dimensions, a scalar is returned
 """
-sum_and_dropdims(A; dims) = sum_and_dropdims(A, dims)
 # Cannot dispatch on named parameter so implement helper methods below
 sum_and_dropdims(A, dims::Dims) = dropdims(sum(A; dims=dims), dims=dims)
 # Case of matching dimensions → return scalar

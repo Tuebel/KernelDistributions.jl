@@ -12,7 +12,6 @@ Bijectors.inverse(b::ZeroIdentity) = b
 
 Bijectors.logabsdetjac(::ZeroIdentity, x::T) where {T<:Number} = zero(T)
 Bijectors.logabsdetjac(::ZeroIdentity, x::AbstractArray{T}) where {T} = zero(T)
-Bijectors.logabsdetjac(::Inverse{<:ZeroIdentity}, x::AbstractArray{T}) where {T} = zero(T)
 
 # Custom reduction like BroadcastedDistribution
 """
@@ -56,7 +55,8 @@ Calculate the transformed variables with the logabsdetjac correction in an optim
 The logabsdetjac correction is reduced by summing up `b.dims`.
 """
 Bijectors.with_logabsdet_jacobian(b::BroadcastedBijector, x) = with_logabsdet_jacobian_array(b, x)
-Bijectors.with_logabsdet_jacobian(b::BroadcastedBijector{0}, x::AbstractArray) = with_logabsdet_jacobian_array(b, x)
+# materialize required for CUDA
+Bijectors.with_logabsdet_jacobian(b::BroadcastedBijector{0}, x::AbstractArray) = with_logabsdet_jacobian_array(materialize(b), x)
 
 function with_logabsdet_jacobian_array(b, x)
     with_logjac = with_logabsdet_jacobian.(b.bijectors, x)

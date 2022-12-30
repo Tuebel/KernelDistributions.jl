@@ -145,6 +145,36 @@ end
 end
 
 @testset "BroadcastedDistribution Transformed, RNG: $rng" for rng in rngs
+    # Scalar single
+    d = @inferred BroadcastedDistribution(KernelExponential, 2.0)
+    td = @inferred transformed(d)
+    y = @inferred rand(rng, td)
+    @test y isa Float64
+    l = @inferred logdensityof(td, y)
+    @test l isa Float64
+
+    x_invlink = @inferred invlink(d, y)
+    x, logjac = @inferred with_logabsdet_jacobian(inverse(bijector(d)), y)
+    @test x == x_invlink
+    @test l == logdensityof(d, x) + logjac
+    @test minimum(x) > 0
+    @test y == @inferred link(d, x)
+
+    # Scalar multiple
+    d = @inferred BroadcastedDistribution(KernelExponential, 2.0)
+    td = @inferred transformed(d)
+    y = @inferred rand(rng, td, 42)
+    @test y isa AbstractVector{Float64}
+    l = @inferred logdensityof(td, y)
+    @test l isa AbstractVector{Float64}
+
+    x_invlink = @inferred invlink(d, y)
+    x, logjac = @inferred with_logabsdet_jacobian(inverse(bijector(d)), y)
+    @test x == x_invlink
+    @test l == logdensityof(d, x) + logjac
+    @test minimum(x) > 0
+    @test y == @inferred link(d, x)
+
     # Array single
     d = @inferred BroadcastedDistribution(KernelExponential, (), rand(rng, Float64, 420))
     td = @inferred transformed(d)

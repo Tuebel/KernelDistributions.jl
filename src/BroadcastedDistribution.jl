@@ -129,7 +129,13 @@ Lazily transforms the distribution type to the unconstrained domain.
 Bijectors.transformed(dist::BroadcastedDistribution{T}) where {T} = BroadcastedDistribution(T, dist.dims, broadcasted(transformed, dist.marginals))
 
 Bijectors.link(dist::BroadcastedDistribution, x) = link.(dist.marginals, x)
+# Scalar case (required for CUDA)
+Bijectors.link(dist::ScalarBroadcastedDistribution, x) = link.(materialize(dist.marginals), x)
+
 Bijectors.invlink(dist::BroadcastedDistribution, y) = invlink.(dist.marginals, y)
+# Scalar case (required for CUDA)
+Bijectors.invlink(dist::ScalarBroadcastedDistribution, y) = invlink.(materialize(dist.marginals), y)
+
 
 # Truncation
 Distributions.truncated(dist::BroadcastedDistribution{T}, lower, upper) where {T} = BroadcastedDistribution(T, dist.dims, broadcasted(truncated, dist.marginals, lower, upper))
