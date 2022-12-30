@@ -2,7 +2,12 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved.
 
-@test BroadcastedDistribution(KernelExponential, 2.0) |> show |> isnothing
+d = @inferred BroadcastedDistribution(KernelExponential, (1,), rand(2, 2))
+@test d |> show |> isnothing
+@test axes(d) == (Base.OneTo(2), Base.OneTo(2))
+@test Dims(d) == (1,)
+@test ndims(d) == 1
+@test size(d) == (2, 2)
 
 @testset "Product BroadcastedDistribution, RNG: $rng" for rng in rngs
     # Scalar single

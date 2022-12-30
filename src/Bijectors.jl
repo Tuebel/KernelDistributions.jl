@@ -66,4 +66,4 @@ end
 
 # Scalar case results in a tuple for with_logjac instead of an array of tuples
 Bijectors.with_logabsdet_jacobian(b::BroadcastedBijector{0}, x) = with_logabsdet_jacobian.(b.bijectors, x)
-Bijectors.with_logabsdet_jacobian(b::BroadcastedBijector{0}, x::AbstractArray{<:Any,0}) = with_logabsdet_jacobian.(b.bijectors, x)
+
