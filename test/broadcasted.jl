@@ -141,40 +141,73 @@ end
     d = BroadcastedDistribution(KernelExponential, [0.5, 1.0, 2.0])
     b = bijector(d)
     @test b isa BroadcastedBijector{1}
+    @test Broadcast.materialize(b).bijectors isa AbstractArray{<:Bijectors.Log}
 end
 
 @testset "BroadcastedDistribution Transformed, RNG: $rng" for rng in rngs
     # Array single
-    d = @inferred transformed(BroadcastedDistribution(KernelExponential, (), rand(rng, Float64, 420)))
-    x = @inferred rand(rng, d)
-    @test x isa AbstractVector{Float64}
-    @test minimum(x) < 0 < maximum(x)
-    l = @inferred logdensityof(d, x)
+    d = @inferred BroadcastedDistribution(KernelExponential, (), rand(rng, Float64, 420))
+    td = @inferred transformed(d)
+    y = @inferred rand(rng, td)
+    @test y isa AbstractVector{Float64}
+    @test minimum(y) < 0 < maximum(y)
+    l = @inferred logdensityof(td, y)
     @test l isa AbstractVector{Float64}
 
-    d = @inferred transformed(BroadcastedDistribution(KernelExponential, (), rand(rng, Float32, 42, 42)))
-    x = @inferred rand(rng, d)
-    @test x isa AbstractMatrix{Float32}
-    @test minimum(x) < 0 < maximum(x)
-    l = @inferred logdensityof(d, x)
+    x_invlink = @inferred invlink(d, y)
+    x, logjac = @inferred with_logabsdet_jacobian(inverse(bijector(d)), y)
+    @test x == x_invlink
+    @test l == logdensityof(d, x) + logjac
+    @test minimum(x) > 0
+    @test y ≈ @inferred link(d, x)
+
+    d = @inferred BroadcastedDistribution(KernelExponential, (), rand(rng, Float32, 42, 42))
+    td = @inferred transformed(d)
+    y = @inferred rand(rng, td)
+    @test y isa AbstractMatrix{Float32}
+    @test minimum(y) < 0 < maximum(y)
+    l = @inferred logdensityof(td, y)
     @test l isa AbstractMatrix{Float32}
 
+    x_invlink = @inferred invlink(d, y)
+    x, logjac = @inferred with_logabsdet_jacobian(inverse(bijector(d)), y)
+    @test x ≈ x_invlink
+    @test l ≈ logdensityof(d, x) + logjac
+    @test minimum(x) > 0
+    @test y ≈ @inferred link(d, x)
+
     # Array multiple
-    d = @inferred transformed(BroadcastedDistribution(KernelExponential, (2,), rand(rng, Float64, 42)))
-    x = @inferred rand(rng, d, 24)
-    @test x isa AbstractMatrix{Float64}
-    @test minimum(x) < 0 < maximum(x)
-    l = @inferred logdensityof(d, x)
+    d = @inferred BroadcastedDistribution(KernelExponential, (2,), rand(rng, Float64, 42))
+    td = @inferred transformed(d)
+    y = @inferred rand(rng, td, 24)
+    @test y isa AbstractMatrix{Float64}
+    @test minimum(y) < 0 < maximum(y)
+    l = @inferred logdensityof(td, y)
     @test l isa AbstractVector{Float64}
     @test size(l) == (42,)
 
-    d = @inferred transformed(BroadcastedDistribution(KernelExponential, (2,), rand(rng, Float32, 24, 42)))
-    x = @inferred rand(rng, d, 11)
-    @test x isa AbstractArray{Float32,3}
-    @test minimum(x) < 0 < maximum(x)
-    l = @inferred logdensityof(d, x)
+    x_invlink = @inferred invlink(d, y)
+    x, logjac = @inferred with_logabsdet_jacobian(inverse(bijector(d)), y)
+    @test x ≈ x_invlink
+    @test l ≈ logdensityof(d, x) + logjac
+    @test minimum(x) > 0
+    @test y ≈ @inferred link(d, x)
+
+    d = @inferred BroadcastedDistribution(KernelExponential, (2,), rand(rng, Float32, 24, 42))
+    td = @inferred transformed(d)
+    y = @inferred rand(rng, td, 11)
+    @test y isa AbstractArray{Float32,3}
+    @test minimum(y) < 0 < maximum(y)
+    l = @inferred logdensityof(td, y)
     @test l isa AbstractMatrix{Float32}
     @test size(l) == (24, 11)
+
+    x_invlink = @inferred invlink(d, y)
+    x, logjac = @inferred with_logabsdet_jacobian(inverse(bijector(d)), y)
+    @test x ≈ x_invlink
+    @test l ≈ logdensityof(d, x) + logjac
+    @test minimum(x) > 0
+    @test y ≈ @inferred link(d, x)
 end
 
 @testset "BroadcastedDistribution Transformed vs. KernelExponential, RNG: $rng" for rng in rngs
