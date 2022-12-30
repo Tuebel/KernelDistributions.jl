@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+@test QuaternionUniform(Float64) |> show |> isnothing
+
 @testset "QuaternionUniform, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred QuaternionUniform(Float64)

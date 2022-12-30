@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+@test KernelDirac(2.0) |> show |> isnothing
+
 @testset "KernelDirac, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred KernelDirac(2.0)

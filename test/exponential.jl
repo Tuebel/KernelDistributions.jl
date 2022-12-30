@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+@test KernelExponential(2.0) |> show |> isnothing
+
 @testset "KernelExponential, RNG: $rng" for rng in rngs
     # Scalar
     d = @inferred KernelExponential(2.0)
@@ -78,7 +80,6 @@ end
     l = @inferred logdensityof(d, x)
     @test l isa AbstractVector{Float64}
 
-    # Fails for Float32
     d = truncated(KernelExponential(Float32(2)), Float32(1), Float32(2))
     x = @inferred rand(rng, d, 4_200)
     @test x isa AbstractVector{Float32}
