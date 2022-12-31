@@ -2,15 +2,15 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
-accurate_exp(min, max, θ, σ, z) = exp(-z / θ + (σ / θ)^2 / 2) / (θ * (exp(-min / θ) - exp(-max / θ)))
-function accurate_erf(min, max, θ, σ, z)
+accurate_exp(min, max, β, σ, z) = exp(-z / β + (σ / β)^2 / 2) / (β * (exp(-min / β) - exp(-max / β)))
+function accurate_erf(min, max, β, σ, z)
     sqrt2σ = sqrt2 * σ
-    common = σ / (sqrt2 * θ) - z / sqrt2σ
+    common = σ / (sqrt2 * β) - z / sqrt2σ
     lower = min / sqrt2σ
     upper = max / sqrt2σ
     erf(common + lower, common + upper) / 2
 end
-smooth_pdf(min, max, θ, σ, z) = accurate_exp(min, max, θ, σ, z) * accurate_erf(min, max, θ, σ, z)
+smooth_pdf(min, max, β, σ, z) = accurate_exp(min, max, β, σ, z) * accurate_erf(min, max, β, σ, z)
 # WARN numerically not stable for values far outside [min,max]
 smooth_logpdf = log ∘ smooth_pdf
 

@@ -12,18 +12,18 @@ Does not support `truncated` of Distributions.jl since it is a smooth truncation
 struct SmoothExponential{T<:Real} <: AbstractKernelDistribution{T,Continuous}
     min::T
     max::T
-    θ::T
+    β::T
     σ::T
 end
 
-Base.show(io::IO, dist::SmoothExponential{T}) where {T} = print(io, "SmoothExponential{$(T)}, min: $(dist.min), max: $(dist.max), θ: $(dist.θ), σ: $(dist.σ)")
+Base.show(io::IO, dist::SmoothExponential{T}) where {T} = print(io, "SmoothExponential{$(T)}, min: $(dist.min), max: $(dist.max), β: $(dist.β), σ: $(dist.σ)")
 
 # Accurate version uses lower and upper bound
-accurate_normalization(d::SmoothExponential) = -logsubexp(-d.min / d.θ, -d.max / d.θ)
-accurate_factor(d::SmoothExponential, x) = (-x / d.θ + (d.σ / d.θ)^2 / 2) - log(d.θ) + accurate_normalization(d)
+accurate_normalization(d::SmoothExponential) = -logsubexp(-d.min / d.β, -d.max / d.β)
+accurate_factor(d::SmoothExponential, x) = (-x / d.β + (d.σ / d.β)^2 / 2) - log(d.β) + accurate_normalization(d)
 function accurate_logerf(d::SmoothExponential{T}, x) where {T}
     invsqrt2σ = inv(sqrt2 * d.σ)
-    common = d.σ / (sqrt2 * d.θ) - x * invsqrt2σ
+    common = d.σ / (sqrt2 * d.β) - x * invsqrt2σ
     lower = d.min * invsqrt2σ
     upper = d.max * invsqrt2σ
     loghalf + logerf(common + lower, common + upper)
@@ -34,7 +34,7 @@ Distributions.logpdf(dist::SmoothExponential{T}, x) where {T} = insupport(dist, 
 
 # Exponential convoluted with normal: Sample from exponential and then add noise of normal
 function rand_kernel(rng::AbstractRNG, dist::SmoothExponential{T}) where {T}
-    μ = rand(rng, truncated(KernelExponential(dist.θ), dist.min, dist.max))
+    μ = rand(rng, truncated(KernelExponential(dist.β), dist.min, dist.max))
     rand(rng, KernelNormal(μ, dist.σ))
 end
 

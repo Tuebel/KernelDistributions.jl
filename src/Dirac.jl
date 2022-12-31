@@ -2,6 +2,10 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+"""
+    KernelDirac(value)
+Type stable implementation of a Dirac distribution which has all it's mass at the `value`
+"""
 struct KernelDirac{T<:Real} <: AbstractKernelDistribution{T,Discrete}
     value::T
 end

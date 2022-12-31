@@ -2,6 +2,11 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+"""
+    KernelNormal(μ, σ)
+Type stable implementation of a Normal distribution.
+Parameterized by the mean μ and standard deviation σ.
+"""
 struct KernelNormal{T<:Real} <: AbstractKernelDistribution{T,Continuous}
     μ::T
     σ::T
