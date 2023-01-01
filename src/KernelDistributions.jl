@@ -106,13 +106,15 @@ export QuaternionUniform
 export SmoothExponential
 export TailUniform
 
+export param_dims
+
 using Reexport
 @reexport import DensityInterface: logdensityof
 @reexport import Random: rand!
 
 # Bijectors
 @reexport import Bijectors: bijector, inverse, link, invlink, with_logabsdet_jacobian, transformed
-@reexport import Distributions: truncated
+@reexport import Distributions: logpdf, logcdf, pdf, truncated
 
 
 end # module KernelDistributions
