@@ -3,18 +3,16 @@
 # All rights reserved. 
 
 """
-    robust_normalize(q)
-Compared to the implementation in Quaternions.jl, this implementation takes care of the re-normalization and avoiding divisions by zero.
+    nonzero_sign(q)
+Compared to the implementation in Quaternions.jl, this implementation does not return a Quaternion with (0,0,0,0) but the identity with (1,0,0,0).
 Eq. (44) in J. Sola, „Quaternion kinematics for the error-state KF“.
 """
-function robust_normalize(q::Quaternion{T}) where {T}
-    a = abs(q)
-    if iszero(a)
-        Quaternion(one(T), zero(T), zero(T), zero(T), true)
+function nonzero_sign(q::Quaternion{T}) where {T}
+    normalized = sign(q)
+    if iszero(normalized)
+        Quaternion(one(T), zero(T), zero(T), zero(T))
     else
-        # Rotations.jl likes normalized quaternions → do not ignore small deviations from 1
-        qn = q / a
-        Quaternion(qn.s, qn.v1, qn.v2, qn.v3, true)
+        normalized
     end
 end
 
@@ -31,7 +29,7 @@ QuaternionUniform(::Type{T}=Float32) where {T} = QuaternionUniform{T}()
 const quat_logp = -log(π^2)
 Distributions.logpdf(::QuaternionUniform{T}, x::Quaternion) where {T} = T(quat_logp)
 
-rand_kernel(rng::AbstractRNG, ::QuaternionUniform{T}) where {T} = Quaternion(randn(rng, T), randn(rng, T), randn(rng, T), randn(rng, T)) |> robust_normalize
+rand_kernel(rng::AbstractRNG, ::QuaternionUniform{T}) where {T} = Quaternion(randn(rng, T), randn(rng, T), randn(rng, T), randn(rng, T)) |> nonzero_sign
 
 # Bijectors
 Bijectors.bijector(::QuaternionUniform) = ZeroIdentity()

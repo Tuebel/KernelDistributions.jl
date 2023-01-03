@@ -5,6 +5,7 @@
 using Bijectors
 using CUDA
 using KernelDistributions
+using LinearAlgebra
 using Quaternions
 using Random
 using SpecialFunctions

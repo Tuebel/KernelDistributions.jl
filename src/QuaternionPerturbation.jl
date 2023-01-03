@@ -11,17 +11,17 @@ struct AdditiveQuaternion{T}
 end
 
 Broadcast.broadcastable(q::AdditiveQuaternion) = Ref(q)
-Base.:+(a::Quaternion, b::AdditiveQuaternion) = robust_normalize(a * b.q)
-Base.:-(a::Quaternion, b::AdditiveQuaternion) = robust_normalize(a / b.q)
+Base.:+(a::Quaternion, b::AdditiveQuaternion) = nonzero_sign(a * b.q)
+Base.:-(a::Quaternion, b::AdditiveQuaternion) = nonzero_sign(a / b.q)
 Base.abs(q::AdditiveQuaternion) = abs(q.q)
 
 """
-    approx_qrotation(x, y, z)
+    approx_exponential(x, y, z)
 Approximate conversion of small rotation vectors ϕ = (x, y, z) to a quaternion.
-≈ double the speed of Quaternions.qrotation
+About double the speed of the exponential map.
 Eq. (193) in J. Sola, „Quaternion kinematics for the error-state KF“
 """
-approx_qrotation(x::T, y::T, z::T) where {T} = Quaternion(T(1), x / T(2), y / T(2), z / T(2)) |> robust_normalize
+approx_exponential(x::T, y::T, z::T) where {T} = Quaternion(T(1), x / T(2), y / T(2), z / T(2)) |> nonzero_sign
 
 """
     QuaternionPerturbation
@@ -39,7 +39,7 @@ QuaternionPerturbation(σ=0.01f0::Real) = QuaternionPerturbation(σ, σ, σ)
 Distributions.logpdf(dist::QuaternionPerturbation{T}, x::Quaternion) where {T} = normlogpdf(zero(T), dist.σ_x, T(2) * x.v1) + normlogpdf(zero(T), dist.σ_y, T(2) * x.v2) + normlogpdf(zero(T), dist.σ_y, T(2) * x.v3)
 Distributions.logpdf(dist::QuaternionPerturbation, x::AdditiveQuaternion) = logpdf(dist, x.q)
 
-rand_kernel(rng::AbstractRNG, dist::QuaternionPerturbation{T}) where {T} = approx_qrotation(dist.σ_x * randn(rng, T), dist.σ_y * randn(rng, T), dist.σ_z * randn(rng, T)) |> AdditiveQuaternion
+rand_kernel(rng::AbstractRNG, dist::QuaternionPerturbation{T}) where {T} = approx_exponential(dist.σ_x * randn(rng, T), dist.σ_y * randn(rng, T), dist.σ_z * randn(rng, T)) |> AdditiveQuaternion
 
 # Bijectors
 Bijectors.bijector(::QuaternionPerturbation) = ZeroIdentity()

@@ -6,13 +6,26 @@
 quatpert_logpdf(q::AdditiveQuaternion) = sum(logdensityof.(KernelNormal(0, σ), imag_part(q.q) .* 2))
 not_identity(q::AdditiveQuaternion) = q.q != Quaternion(1, 0, 0, 0)
 
+"""
+    exponential_map(x, y, z)
+Convert a rotation vector to a Quaternion (formerly qrotation in Quaternions.jl)
+Eq. (101) in J. Sola, „Quaternion kinematics for the error-state KF“
+"""
+function exponential_map(x, y, z)
+    rotvec = [x, y, z]
+    theta = norm(rotvec)
+    s, c = sincos(theta / 2)
+    scaleby = s / (iszero(theta) ? one(theta) : theta)
+    Quaternion(c, scaleby * rotvec[1], scaleby * rotvec[2], scaleby * rotvec[3])
+end
+
 @test QuaternionPerturbation(σ) |> show |> isnothing
 
 @testset "AdditiveQuaternion arithmetics" begin
     # Normalization approximation
     ϕ = rand(KernelNormal(0, Float32(σ)), 3)
-    q = KernelDistributions.approx_qrotation(ϕ...)
-    @test q ≈ qrotation(ϕ)
+    q = KernelDistributions.approx_exponential(ϕ...)
+    @test q ≈ exponential_map(ϕ...)
 
     # Add & subtract
     aq = AdditiveQuaternion(q)
