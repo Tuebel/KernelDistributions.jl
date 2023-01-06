@@ -26,11 +26,10 @@ test:
 pages:
   stage: deploy
   script:
-    - julia --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate();'
-    - julia --project=docs --color=yes docs/make.jl
+    - julia --project=@. -e 'using Pkg; Pkg.add("Documenter"); Pkg.instantiate(); include("docs/make.jl");'
     - mv docs/build public # move to the directory picked up by Gitlab pages
   artifacts:
     paths:
       - public
-  only:
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
