@@ -146,7 +146,7 @@ end
     d = BroadcastedDistribution(KernelExponential, [0.5, 1.0, 2.0])
     b = bijector(d)
     @test b isa BroadcastedBijector{1}
-    @test Broadcast.materialize(b).bijectors isa AbstractArray{<:Bijectors.Log}
+    @test Broadcast.materialize(b).bijectors == fill(bijector(Exponential()), size(d))
 end
 
 @testset "BroadcastedDistribution Transformed, RNG: $rng" for rng in rngs

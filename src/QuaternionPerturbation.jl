@@ -6,7 +6,7 @@
     AdditiveQuaternion(q)
 Wraps a quaternion and remaps `+` to `*` and `-` to `/` to support additive proposal interfaces.
 """
-struct AdditiveQuaternion{T}
+struct AdditiveQuaternion{T} <: Number
     q::Quaternion{T}
 end
 
