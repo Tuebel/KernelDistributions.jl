@@ -23,6 +23,6 @@ rand_kernel(rng::AbstractRNG, dist::KernelUniform{T}) where {T} = (dist.max - di
 
 Base.maximum(dist::KernelUniform) = dist.max
 Base.minimum(dist::KernelUniform) = dist.min
-Bijectors.bijector(dist::KernelUniform) = Bijectors.TruncatedBijector{0}(minimum(dist), maximum(dist))
+# Bijector default for ContinuousUnivariateDistribution is Truncated(minimum, maximum), do not reimplement
 Distributions.insupport(dist::KernelUniform, x::Real) = minimum(dist) <= x <= maximum(dist)
 Distributions.cdf(d::KernelUniform, x::Real) = clamp((x - d.min) / (d.max - d.min), 0, 1)

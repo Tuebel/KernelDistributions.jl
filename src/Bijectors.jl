@@ -2,16 +2,36 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+# CUDA compatibility
+function Bijectors.transform(bij::Bijectors.TruncatedBijector, x::Real)
+    a, b = bij.lb, bij.ub
+    Bijectors.truncated_link(Bijectors._clamp(x, a, b), a, b)
+end
+
+function Bijectors.transform(ib::Inverse{<:Bijectors.TruncatedBijector}, y::Real)
+    a, b = ib.orig.lb, ib.orig.ub
+    return Bijectors._clamp(Bijectors.truncated_invlink(y, a, b), a, b)
+end
+
+function Bijectors.logabsdetjac(b::Bijectors.TruncatedBijector, x::Real)
+    a, b = b.lb, b.ub
+    return Bijectors.truncated_logabsdetjac(Bijectors._clamp(x, a, b), a, b)
+end
+
+# Custom bijectors
+
 """
     ZeroIdentity
 Identity bijector without any allocations.
 """
-struct ZeroIdentity <: Bijector{0} end
-(::ZeroIdentity)(x) = x
+struct ZeroIdentity <: Bijector end
+
+Bijectors.transform(::ZeroIdentity, x) = x
 Bijectors.inverse(b::ZeroIdentity) = b
 
 Bijectors.logabsdetjac(::ZeroIdentity, x::T) where {T<:Number} = zero(T)
 Bijectors.logabsdetjac(::ZeroIdentity, x::AbstractArray{T}) where {T} = zero(T)
+ChangesOfVariables.with_logabsdet_jacobian(b::ZeroIdentity, x) = b(x), logabsdetjac(b, x)
 
 # Custom reduction like BroadcastedDistribution
 """
@@ -19,7 +39,7 @@ Bijectors.logabsdetjac(::ZeroIdentity, x::AbstractArray{T}) where {T} = zero(T)
 Uses **lazily** broadcasted to enable bijectors over multiple dimensions.
 Moreover reduction dims can be specified which are applied during logabsdetjac correction.
 """
-struct BroadcastedBijector{N,B} <: Bijector{N}
+struct BroadcastedBijector{N,B} <: Bijector
     dims::Dims{N}
     bijectors::B
 end
@@ -28,7 +48,7 @@ end
     (::BroadcastedBijector)(x)
 Applies the internal bijectors via broadcasting.
 """
-(b::BroadcastedBijector)(x) = x .|> b.bijectors
+Bijectors.transform(b::BroadcastedBijector, x) = x .|> b.bijectors
 
 """
     inverse(b::BroadcastedBijector)

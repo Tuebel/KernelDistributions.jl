@@ -27,7 +27,7 @@ rand_kernel(rng::AbstractRNG, dist::KernelExponential{T}) where {T} = dist.β * 
 
 Base.maximum(::KernelExponential{T}) where {T} = typemax(T)
 Base.minimum(::KernelExponential{T}) where {T} = zero(T)
-Bijectors.bijector(::KernelExponential) = Bijectors.Log{0}()
+Bijectors.bijector(::KernelExponential) = elementwise(log)
 Distributions.insupport(dist::KernelExponential, x::Real) = minimum(dist) <= x
 # Support Truncated{KernelExponential}
 Distributions.logcdf(dist::KernelExponential{T}, x::Real) where {T} = log1mexp(-max(T(x) / dist.β, zero(T)))

@@ -30,6 +30,7 @@ module KernelDistributions
 
 using Bijectors
 using Base.Broadcast: broadcasted, materialize, Broadcasted
+using ChangesOfVariables
 using CUDA
 using DensityInterface
 using LogExpFunctions
@@ -39,8 +40,8 @@ using Random123: Philox2x, set_counter!
 using SpecialFunctions
 using StatsFuns
 
-# TODO At one point most of the distributions could be replaced with Distributions.jl. Mixtures could be problematic.
-# TODO should open a pull request to fix type of https://github.com/JuliaStats/Distributions.jl/blob/d19ac4526bab2584a84323eea4af92805f99f034/src/univariate/continuous/uniform.jl#L120
+# TODO At one point most of the distributions could be replaced with Distributions.jl. Mixtures could be problematic. A showstopper would be if the discussion around return types would not resolve: https://github.com/JuliaStats/Distributions.jl/issues/1041 . Always returning a Float64 would not be an option for memory constrained GPU calculations.
+
 """
     AbstractKernelDistribution{T,S<:ValueSupport} <: UnivariateDistribution{S} 
 Overrides the following behaviors of Distributions.jl:

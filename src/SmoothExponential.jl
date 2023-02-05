@@ -22,8 +22,8 @@ Base.show(io::IO, dist::SmoothExponential{T}) where {T} = print(io, "SmoothExpon
 accurate_normalization(d::SmoothExponential) = -logsubexp(-d.min / d.β, -d.max / d.β)
 accurate_factor(d::SmoothExponential, x) = (-x / d.β + (d.σ / d.β)^2 / 2) - log(d.β) + accurate_normalization(d)
 function accurate_logerf(d::SmoothExponential{T}, x) where {T}
-    invsqrt2σ = inv(sqrt2 * d.σ)
-    common = d.σ / (sqrt2 * d.β) - x * invsqrt2σ
+    invsqrt2σ = inv(sqrt(T(2)) * d.σ)
+    common = d.σ / (sqrt(T(2)) * d.β) - x * invsqrt2σ
     lower = d.min * invsqrt2σ
     upper = d.max * invsqrt2σ
     loghalf + logerf(common + lower, common + upper)

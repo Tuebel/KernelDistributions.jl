@@ -27,25 +27,28 @@ Distributions.insupport(dist::CircularUniform, x::Real) = minimum(dist) <= x <= 
     Circular
 Transform ℝ → [0,2π)
 """
-struct Circular <: Bijector{0} end
+struct Circular <: Bijector end
 
 """
-    (::Circular)(x)
+    transform(Circular, x)
 Transform from [0,2π] to ℝ.
 In theory inverse of mod does not exist, in practice the same value is returned, since `[0,2π] ∈ ℝ`
 """
-(::Circular)(x) = x
+Bijectors.transform(::Circular, x) = x
 
 """
-    (::Circular)(y)
+    transform(Circular, y)
 Uses `mod2pi` to transform ℝ to [0,2π].
 """
-(::Inverse{<:Circular})(y) = mod2pi.(y)
+Bijectors.transform(::Inverse{Circular}, y) = mod2pi.(y)
 
 """
-    logabsdetjac(::Circular, x)
+    logabsdetjac(Circular, x)
 mod2pi will not be zero for n*2*π, thus the discontinuity will not be reached.
 Thus, the log Jacobian is always 0. 
 """
 Bijectors.logabsdetjac(::Circular, x) = zero(x)
+ChangesOfVariables.with_logabsdet_jacobian(b::Circular, x) = b(x), logabsdetjac(b, x)
+
 Bijectors.logabsdetjac(::Inverse{<:Circular}, y) = zero(y)
+ChangesOfVariables.with_logabsdet_jacobian(b::Inverse{Circular}, y) = b(y), logabsdetjac(b, y)
