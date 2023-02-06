@@ -2,7 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
-# CUDA compatibility
+# CUDA compatibility, original implementations broadcast for all x types which causes some dynamic function invocation.
+
 function Bijectors.transform(bij::Bijectors.TruncatedBijector, x::Real)
     a, b = bij.lb, bij.ub
     Bijectors.truncated_link(Bijectors._clamp(x, a, b), a, b)
