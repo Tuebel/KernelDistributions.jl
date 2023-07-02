@@ -29,7 +29,7 @@ QuaternionUniform(::Type{T}=Float32) where {T} = QuaternionUniform{T}()
 const quat_logp = -log(π^2)
 Distributions.logpdf(::QuaternionUniform{T}, x::Quaternion) where {T} = T(quat_logp)
 
-rand_kernel(rng::AbstractRNG, ::QuaternionUniform{T}) where {T} = Quaternion(randn(rng, T), randn(rng, T), randn(rng, T), randn(rng, T)) |> nonzero_sign
+rand_kernel(rng::AbstractRNG, ::QuaternionUniform{T}) where {T} = randn(rng, Quaternion{T}) |> nonzero_sign
 
 # Bijectors
 Bijectors.bijector(::QuaternionUniform) = ZeroIdentity()
