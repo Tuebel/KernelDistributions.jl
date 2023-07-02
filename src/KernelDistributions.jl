@@ -98,12 +98,9 @@ export KernelNormal
 export KernelUniform
 
 # Special
-export AdditiveQuaternion
 export BroadcastedDistribution
 export CircularUniform
-export QuaternionPerturbation
-export QuaternionUniform
-export QuaternionUniform
+export QuaternionUniform, ⊕, ⊖
 export SmoothExponential
 export TailUniform
 

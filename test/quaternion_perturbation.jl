@@ -1,15 +1,20 @@
 # @license BSD-3 https://opensource.org/licenses/BSD-3-Clause
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
-# All rights reserved. 
+# All rights reserved.
+
+using KernelDistributions
+using LinearAlgebra
+using Quaternions
+using Random
+using Test
 
 σ = 0.01
-quatpert_logpdf(q::AdditiveQuaternion) = sum(logdensityof.(KernelNormal(0, σ), imag_part(q.q) .* 2))
-not_identity(q::AdditiveQuaternion) = q.q != Quaternion(1, 0, 0, 0)
 
 """
     exponential_map(x, y, z)
 Convert a rotation vector to a Quaternion (formerly qrotation in Quaternions.jl)
 Eq. (101) in J. Sola, „Quaternion kinematics for the error-state KF“
+Exponential for quaternions can be reformulated to the exponential map using (46).
 """
 function exponential_map(x, y, z)
     rotvec = [x, y, z]
@@ -19,134 +24,64 @@ function exponential_map(x, y, z)
     Quaternion(c, scaleby * rotvec[1], scaleby * rotvec[2], scaleby * rotvec[3])
 end
 
-@test QuaternionPerturbation(σ) |> show |> isnothing
+# (eq. 105, Sola2012)
+function logarithmic_map(q)
+    qv = [q.v1, q.v2, q.v3]
+    abs_qv = norm(qv)
+    ϕ = 2 * atan(abs_qv, q.s)
+    u = qv / abs_qv
+    ϕ * u
+end
 
-@testset "AdditiveQuaternion arithmetics" begin
+@testset "Additive and subtractive quaternion operators" begin
     # Normalization approximation
-    ϕ = rand(KernelNormal(0, Float32(σ)), 3)
-    q = KernelDistributions.approx_exponential(ϕ...)
-    @test q ≈ exponential_map(ϕ...)
+    θ = rand(KernelNormal(0, Float32(σ)), 3)
+    q = @inferred KernelDistributions.exp_map(θ)
+    @test abs(q) == 1
+    @test q isa QuaternionF32
+    @test !isone(q)
+    @test q ≈ exponential_map(θ...)
+    @test θ ≈ KernelDistributions.log_map(q) ≈ logarithmic_map(q)
 
-    # Add & subtract
-    aq = AdditiveQuaternion(q)
-    res = Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0) + aq
-    @test res isa Quaternion{Float32}
-    @test res ≈ q
-    @test Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0) .+ fill(aq, 42) ==
-          fill(Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0), 42) .+ aq
+    # add rotation to quaternion
+    qs = @inferred one(QuaternionF32) ⊕ θ
+    @test qs isa QuaternionF32
+    @test qs == q
+    # broadcastable?
+    Qs1 = @inferred one(QuaternionF32) .⊕ fill(θ, 42)
+    @test reduce(&, Qs1 .== qs)
+    @test Qs1 isa Vector{QuaternionF32}
+    @test length(Qs1) == 42
+    # [θ] to broadcast along first dimension
+    Qs2 = fill(one(QuaternionF32), 42) .⊕ [θ]
+    @test Qs1 == Qs2
 
-    res = Quaternion(1.0f0, 0.0f0, 0.0f0, 0.0f0) - aq
-    @test res isa Quaternion{Float32}
-    @test res ≈ Quaternion(real(q), -1 .* imag_part(q)...)
+    # subtract rotation from quaternion
+    qs = @inferred one(QuaternionF32) ⊖ θ
+    @test qs isa QuaternionF32
+    @test qs == Quaternion(real(q), -1 .* imag_part(q)...)
+    @test abs(qs) == 1
+    # broadcastable?
+    Qs1 = @inferred one(QuaternionF32) .⊖ fill(θ, 42)
+    @test reduce(&, Qs1 .== qs)
+    @test Qs1 isa Vector{QuaternionF32}
+    @test length(Qs1) == 42
+    # [θ] to broadcast along first dimension
+    Qs2 = fill(one(QuaternionF32), 42) .⊖ [θ]
+    @test Qs1 == Qs2
 
-    @test abs(aq) == abs(q)
-end
-
-@testset "QuaternionPerturbation, RNG: $rng" for rng in rngs
-    # Scalar
-    d = @inferred QuaternionPerturbation(σ)
-    x = @inferred rand(rng, d)
-    @test x isa AdditiveQuaternion{Float64}
-    @test abs(x.q) ≈ 1
-    l = @inferred logdensityof(d, x)
-    @test l isa Float64
-
-    d = QuaternionPerturbation(Float32(σ))
-    x = @inferred rand(rng, d)
-    @test x isa AdditiveQuaternion{Float32}
-    @test abs(x.q) ≈ 1
-    l = @inferred logdensityof(d, x)
-    @test l isa Float32
-
-    # Array
-    d = QuaternionPerturbation(σ)
-    x = @inferred rand(rng, d, 4_200)
-    @test x isa AbstractVector{AdditiveQuaternion{Float64}}
-    @test reduce(&, abs.(x) .≈ 1)
-    # Corner case: all quaternions have been (0,0,0,0) and normalized
-    @test reduce(&, not_identity.(x))
-    l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float64}
-
-    d = QuaternionPerturbation(Float32(σ))
-    x = @inferred rand(rng, d, 4_200)
-    @test x isa AbstractVector{AdditiveQuaternion{Float32}}
-    @test reduce(&, abs.(x) .≈ 1)
-    # Corner case: all quaternions have been (0,0,0,0) and normalized
-    @test reduce(&, not_identity.(x))
-    l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float32}
-end
-
-@testset "QuaternionPerturbation logdensityof" begin
-    kern = QuaternionPerturbation(σ)
-
-    q = AdditiveQuaternion(zero(Quaternion))
-    @test logdensityof(kern, q) == quatpert_logpdf(q)
-    q = rand(kern)
-    @test logdensityof(kern, q) == quatpert_logpdf(q)
-end
-
-@testset "QuaternionPerturbation Bijectors" begin
-    @test bijector(QuaternionPerturbation()) == ZeroIdentity()
-end
-
-@testset "QuaternionPerturbation Transformed, RNG: $rng" for rng in rngs
-    # Scalar
-    d = @inferred transformed(QuaternionPerturbation(σ))
-    x = @inferred rand(rng, d)
-    @test x isa AdditiveQuaternion{Float64}
-    @test abs(x.q) ≈ 1
-    l = @inferred logdensityof(d, x)
-    @test l isa Float64
-
-    d = @inferred transformed(QuaternionPerturbation(Float32(σ)))
-    x = @inferred rand(rng, d)
-    @test x isa AdditiveQuaternion{Float32}
-    @test abs(x.q) ≈ 1
-    l = @inferred logdensityof(d, x)
-    @test l isa Float32
-
-    # Array
-    d = @inferred transformed(QuaternionPerturbation(σ))
-    x = @inferred rand(rng, d, 4_200)
-    @test x isa AbstractVector{AdditiveQuaternion{Float64}}
-    @test reduce(&, abs.(x) .≈ 1)
-    # Corner case: all quaternions have been (0,0,0,0) and normalized
-    @test reduce(&, not_identity.(x))
-    l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float64}
-
-    d = @inferred transformed(QuaternionPerturbation(Float32(σ)))
-    x = @inferred rand(rng, d, 4_200)
-    @test x isa AbstractVector{AdditiveQuaternion{Float32}}
-    @test reduce(&, abs.(x) .≈ 1)
-    # Corner case: all quaternions have been (0,0,0,0) and normalized
-    @test reduce(&, not_identity.(x))
-    l = @inferred logdensityof(d, x)
-    @test l isa AbstractVector{Float32}
-end
-
-@testset "QuaternionPerturbation Transformed vs. Distributions.jl" begin
-    # Compare to Distributions.jl
-    kern = transformed(QuaternionPerturbation(σ))
-
-    # Identity bijector → no logjac correction
-    q = AdditiveQuaternion(zero(Quaternion))
-    @test logdensityof(kern, q) == quatpert_logpdf(q)
-    q = rand(kern)
-    @test logdensityof(kern, q) == quatpert_logpdf(q)
-    @test logdensityof(kern, fill(q, 42)) == quatpert_logpdf.(fill(q, 42))
-
-    b = bijector(kern)
-    q = rand(kern)
-    @test logabsdetjac(b, q) == 0
-    q = rand(kern, 42)
-    @test logabsdetjac(b, q) == 0
-    q = AdditiveQuaternion(zero(Quaternion))
-    @test logabsdetjac(b, q) == 0
-    @test logabsdetjac(inverse(b), q) == 0
-    q = fill(q, 42)
-    @test logabsdetjac(b, q) == 0
-    @test logabsdetjac(inverse(b), q) == 0
+    # subtract quaternion from quaternion
+    qs = @inferred one(QuaternionF32) ⊕ θ
+    @test qs ⊖ one(QuaternionF32) ≈ θ
+    q = randn(QuaternionF32)
+    qs = q ⊕ θ
+    @test θ ≈ qs ⊖ q
+    @test qs ⊖ q ≈ -(q ⊖ qs)
+    @test (qs ⊖ q) isa Vector{Float32}
+    # broadcastable?
+    Qs = @inferred q .⊕ fill(θ, 42)
+    Θ = @inferred Qs .⊖ q
+    @test reduce(&, Θ .≈ [θ])
+    @test Θ isa Vector{Vector{Float32}}
+    @test length(Θ) == 42
 end
