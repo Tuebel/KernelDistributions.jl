@@ -7,7 +7,6 @@ Bijectors.bijector(dists::AbstractArray{<:KernelOrTransformedKernel}) = bijector
 
 # By default, Distributions.jl disallows logdensityof with multiple samples (Arrays and Matrices). KernelDistributions should be inherently allowing multiple samples.
 DensityInterface.logdensityof(dist::KernelOrKernelArray, x::AbstractArray) = logpdf.(dist, x)
-# TODO DensityInterface.logdensityof(dist::KernelOrKernelArray, x::AbstractMatrix) = logpdf.(dist, x)
 
 """
     array_for_rng(rng, T, dims...)
@@ -20,7 +19,6 @@ array_for_rng(::CUDA.RNG) = CuArray
 
 # Make KernelDistributions extendable by allowing to override it for custom distributions
 array_for_rng(rng::AbstractRNG, ::KernelOrTransformedKernel{T}, dims::Integer...) where {T} = array_for_rng(rng, T, dims...)
-# TODO array_for_rng(rng::AbstractRNG, ::AbstractArray{T}, dims::Integer...) where {T<:KernelOrTransformedKernel} = array_for_rng(rng, eltype(T), dims...)
 
 """
     rand(rng, dist, [dims...])

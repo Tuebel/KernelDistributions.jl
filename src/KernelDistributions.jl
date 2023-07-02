@@ -64,7 +64,7 @@ include("Scalar.jl")
 include("Bijectors.jl")
 include("Distributions.jl")
 
-# Standard distributions
+# Univariate
 include("BinaryMixture.jl")
 include("Dirac.jl")
 include("Exponential.jl")
@@ -90,7 +90,7 @@ export BroadcastedBijector
 export Circular
 export ZeroIdentity
 
-# Standard distributions
+# Univariate
 export BinaryMixture
 export KernelDirac
 export KernelExponential
