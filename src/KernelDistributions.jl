@@ -40,6 +40,8 @@ using Random123: Philox2x, set_counter!
 using SpecialFunctions
 using StatsFuns
 
+# BUG Many functions involving comparisons with irrational numbers do not work with CUDA on julia >=1.9. Fix after this issue has been resolved, huge slew of methods which need re-implementation: https://github.com/JuliaGPU/GPUCompiler.jl/issues/384
+
 # TODO At one point most of the distributions could be replaced with Distributions.jl. Mixtures could be problematic. A showstopper would be if the discussion around return types would not resolve: https://github.com/JuliaStats/Distributions.jl/issues/1041 . Always returning a Float64 would not be an option for memory constrained GPU calculations.
 
 """
