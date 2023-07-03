@@ -40,6 +40,12 @@ It returns the vectorial angular difference θ ∈ R3 between two elements of SO
 This difference is expressed in the vector space tangent to the reference element [...]' (eq. 161, Sola 2012)
 """
 ⊖(qs::Quaternion, qr::Quaternion) = log_map(qr \ qs)
-⊖(qs::Quaternion, θ) = qs ⊕ (-θ)
 # Default to subtraction
 ⊖(a, b) = a - b
+
+# Broadcasting behavior of ⊕ for quaternions since the array types would result in dimensions mismatches. Alternative would be to introduce a QuaternionPerturbation type to wrap the arrays.
+Broadcast.broadcasted(::typeof(⊕), q::Quaternion, v::AbstractVector{<:Real}) = Broadcast.broadcasted(⊕, Ref(q), Ref(v))
+Broadcast.broadcasted(::typeof(⊕), q::Quaternion, M::AbstractMatrix{<:Real}) = Broadcast.broadcasted(⊕, Ref(q), [v for v in eachcol(M)])
+
+Broadcast.broadcasted(::typeof(⊕), q::AbstractVector{<:Quaternion}, v::AbstractVector{<:Real}) = Broadcast.broadcasted(⊕, q, Ref(v))
+Broadcast.broadcasted(::typeof(⊕), q::AbstractVector{<:Quaternion}, M::AbstractMatrix{<:Real}) = Broadcast.broadcasted(⊕, q, [v for v in eachcol(M)])

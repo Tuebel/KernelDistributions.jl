@@ -33,7 +33,7 @@ function logarithmic_map(q)
     ϕ * u
 end
 
-@testset "Additive and subtractive quaternion operators" begin
+@testset "quaternion exponential and logarithmic maps" begin
     # Normalization approximation
     θ = rand(KernelNormal(0, Float32(σ)), 3)
     q = @inferred KernelDistributions.exp_map(θ)
@@ -42,35 +42,42 @@ end
     @test !isone(q)
     @test q ≈ exponential_map(θ...)
     @test θ ≈ KernelDistributions.log_map(q) ≈ logarithmic_map(q)
+end
 
+@testset "⊕ quaternion operator" begin
+    θ = rand(KernelNormal(0, Float32(σ)), 3)
+    q = @inferred KernelDistributions.exp_map(θ)
     # add rotation to quaternion
     qs = @inferred one(QuaternionF32) ⊕ θ
     @test qs isa QuaternionF32
     @test qs == q
-    # broadcastable?
+end
+
+@testset "Broadcasting ⊕ operator " begin
+    θ = rand(KernelNormal(0, Float32(σ)), 3)
+    q = @inferred KernelDistributions.exp_map(θ)
+
+    qs = @inferred one(QuaternionF32) ⊕ θ
     Qs1 = @inferred one(QuaternionF32) .⊕ fill(θ, 42)
     @test reduce(&, Qs1 .== qs)
     @test Qs1 isa Vector{QuaternionF32}
     @test length(Qs1) == 42
-    # [θ] to broadcast along first dimension
-    Qs2 = fill(one(QuaternionF32), 42) .⊕ [θ]
-    @test Qs1 == Qs2
 
-    # subtract rotation from quaternion
-    qs = @inferred one(QuaternionF32) ⊖ θ
-    @test qs isa QuaternionF32
-    @test qs == Quaternion(real(q), -1 .* imag_part(q)...)
-    @test abs(qs) == 1
-    # broadcastable?
-    Qs1 = @inferred one(QuaternionF32) .⊖ fill(θ, 42)
-    @test reduce(&, Qs1 .== qs)
-    @test Qs1 isa Vector{QuaternionF32}
-    @test length(Qs1) == 42
-    # [θ] to broadcast along first dimension
-    Qs2 = fill(one(QuaternionF32), 42) .⊖ [θ]
+    # scalar quaternion, "scalar" rotation
+    qs2 = @inferred one(QuaternionF32) .⊕ θ
+    @test qs == qs2
+    # scalar quaternion, vector of rotations
+    Qs2 = @inferred one(QuaternionF32) .⊕ reduce(hcat, fill(θ, 42))
     @test Qs1 == Qs2
+    # vector of quaternions, "scalar" rotation
+    Qs2 = @inferred fill(one(QuaternionF32), 42) .⊕ θ
+    @test Qs1 == Qs2
+    # vector of quaternions, vector of rotations
+    Qs2 = @inferred fill(one(QuaternionF32), 42) .⊕ reduce(hcat, fill(θ, 42))
+    @test Qs1 == Qs2
+end
 
-    # subtract quaternion from quaternion
+@testset "⊖ quaternion operator" begin
     qs = @inferred one(QuaternionF32) ⊕ θ
     @test qs ⊖ one(QuaternionF32) ≈ θ
     q = randn(QuaternionF32)
