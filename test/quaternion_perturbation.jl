@@ -78,6 +78,9 @@ end
 end
 
 @testset "⊖ quaternion operator" begin
+    θ = rand(KernelNormal(0, Float32(σ)), 3)
+    q = @inferred KernelDistributions.exp_map(θ)
+
     qs = @inferred one(QuaternionF32) ⊕ θ
     @test qs ⊖ one(QuaternionF32) ≈ θ
     q = randn(QuaternionF32)
