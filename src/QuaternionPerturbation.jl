@@ -13,6 +13,7 @@ Exponential for quaternions can be reformulated to the exponential map using (eq
 """
 exp_map(x, y, z) = exp(Quaternion(0, x / 2, y / 2, z / 2)) |> nonzero_sign # pretty much as fast as the approx version in (193)
 exp_map(v) = exp_map(v...)
+exp_map(M::AbstractMatrix) = exp_map.(eachcol(M))
 
 """
     log_map(q)
@@ -49,3 +50,27 @@ Broadcast.broadcasted(::typeof(⊕), q::Quaternion, M::AbstractMatrix{<:Real}) =
 
 Broadcast.broadcasted(::typeof(⊕), q::AbstractVector{<:Quaternion}, v::AbstractVector{<:Real}) = Broadcast.broadcasted(⊕, q, Ref(v))
 Broadcast.broadcasted(::typeof(⊕), q::AbstractVector{<:Quaternion}, M::AbstractMatrix{<:Real}) = Broadcast.broadcasted(⊕, q, [v for v in eachcol(M)])
+
+"""
+    outer_product(q)
+Interprets q as vector and calculates q * q'.
+"""
+function outer_product(q::Quaternion{T})::Matrix{T} where {T}
+    v = [q.s, q.v1, q.v2, q.v3]
+    v * v'
+end
+
+"""
+    mean(q::AbstractVector{<:Quaternion}, w)
+Calculate the mean Quaternion via eigenvalue decomposition.
+Based on "Averaging Quaternions", Markley et al. 2007.
+"""
+function Statistics.mean(q::AbstractVector{<:Quaternion}, w::AbstractVector)
+    # TODO Broadcasting not type stable but faster than list comprehension?
+    wo = @. w * outer_product(q)
+    M = sum(wo) |> Symmetric
+    # sorted → last column contains the eigenvector corresponding to the largest eigenvalue
+    v = eigvecs(M)[:, end]
+    # eigenvalue has unit length → no normalization required
+    Quaternion(v...)
+end

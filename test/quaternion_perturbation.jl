@@ -6,6 +6,7 @@ using KernelDistributions
 using LinearAlgebra
 using Quaternions
 using Random
+using Statistics
 using Test
 
 σ = 0.01
@@ -94,4 +95,15 @@ end
     @test reduce(&, Θ .≈ [θ])
     @test Θ isa Vector{Vector{Float32}}
     @test length(Θ) == 42
+end
+
+@testset "mean quaternion" begin
+    θ = rand(KernelNormal(0, Float32(σ)), 3, 10)
+    q = KernelDistributions.exp_map(θ)
+    @test length(q) == 10
+    w = rand(Float32, length(q))
+    # TODO not type stable but fast?
+    q_mean = mean(q, w)
+    @test q_mean isa QuaternionF32
+    @test abs(q_mean) ≈ 1
 end

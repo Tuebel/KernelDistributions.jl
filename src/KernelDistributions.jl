@@ -33,11 +33,13 @@ using Base.Broadcast: broadcasted, materialize, Broadcasted
 using ChangesOfVariables
 using CUDA
 using DensityInterface
+using LinearAlgebra
 using LogExpFunctions
 using Quaternions
 using Random
 using Random123: Philox2x, set_counter!
 using SpecialFunctions
+using Statistics
 using StatsFuns
 
 # BUG Many functions involving comparisons with irrational numbers do not work with CUDA on julia >=1.9. Fix after this issue has been resolved, huge slew of methods which need re-implementation: https://github.com/JuliaGPU/GPUCompiler.jl/issues/384
