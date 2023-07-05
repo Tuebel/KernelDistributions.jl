@@ -65,7 +65,7 @@ end
 
 @testset "Product BroadcastedDistribution vs. Distributions.jl" begin
     params = [0.5, 1.0, 2.0]
-    dist = Product(Exponential.(params))
+    dist = product_distribution(Exponential.(params))
     kern = BroadcastedDistribution(KernelExponential, params)
 
     @test logdensityof(dist, [0.0, 0.0, 0.0]) == logdensityof(kern, [0.0, 0.0, 0.0])
