@@ -6,7 +6,7 @@ using KernelDistributions
 using LinearAlgebra
 using Quaternions
 using Random
-using Statistics
+using StatsBase
 using Test
 
 σ = 0.01
@@ -98,12 +98,46 @@ end
 end
 
 @testset "mean quaternion" begin
+    # Vector of quaternions
     θ = rand(KernelNormal(0, Float32(σ)), 3, 10)
     q = KernelDistributions.exp_map(θ)
     @test length(q) == 10
-    w = rand(Float32, length(q))
-    # TODO not type stable but fast?
-    q_mean = mean(q, w)
+    w = rand(Float32, length(q)) |> weights
+    q_mean = @inferred mean(q, w)
     @test q_mean isa QuaternionF32
     @test abs(q_mean) ≈ 1
+    # Matrix shape
+    Q = randn(QuaternionF32, (10, 5)) .|> sign
+    W = rand(Float32, size(Q)) |> weights
+    Q_mean = @inferred mean(Q, W)
+    @test Q_mean isa QuaternionF32
+    @test abs(Q_mean) ≈ 1
+end
+
+# https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_covariance
+function biased_quat_cov(q::AbstractVector{<:Quaternion}, w::AbstractWeights)
+    μ = mean(q, w)
+    diffs = q .⊖ μ
+    sum(@. w * KernelDistributions.outer_product(diffs)) / sum(w)
+end
+
+# https://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Reliability_weights_2
+function unbiased_quat_cov(q::AbstractVector{<:Quaternion}, w::AbstractWeights)
+    μ = mean(q, w)
+    diffs = q .⊖ μ
+    sum(@. w * KernelDistributions.outer_product(diffs)) / (sum(w) - sum(w .^ 2) / sum(w))
+end
+
+@testset "covariance rotation of quaternion" begin
+    q = rand(QuaternionF32, 5) .|> sign
+    w = rand(Float32, 5) |> AnalyticWeights
+    μ, Σ = @inferred mean_and_cov(q, w; corrected=false)
+    @test μ == mean(q, w)
+    @test Σ ≈ biased_quat_cov(q, w)
+    @test cov(q, w; corrected=false) ≈ biased_quat_cov(q, w)
+    μ, Σ = @inferred mean_and_cov(q, w; corrected=true)
+    @test μ == mean(q, w)
+    @test Σ ≈ unbiased_quat_cov(q, w)
+    Σ = @inferred cov(q, w; corrected=true)
+    @test Σ ≈ unbiased_quat_cov(q, w)
 end

@@ -30,7 +30,8 @@ end
 'The ‘plus’ operator [qs = qr ⊕ θ] : SO(3) × R3 → SO(3) produces an element S of SO(3) which is the result of composing a reference element R of SO(3) with a (often small) rotation.
 This rotation is specified by a vector of θ ∈ R3 in the vector space tangent [...]' (eq. 158, Sola 2012)
 """
-⊕(q::Quaternion, θ) = q * exp_map(θ)
+⊕(q::Quaternion, θ) = q ⊕ exp_map(θ)
+⊕(q1::Quaternion, q2::Quaternion) = q1 * q2
 # Default to addition
 ⊕(a, b) = a + b
 
@@ -57,20 +58,46 @@ Interprets q as vector and calculates q * q'.
 """
 function outer_product(q::Quaternion{T})::Matrix{T} where {T}
     v = [q.s, q.v1, q.v2, q.v3]
-    v * v'
+    outer_product(v)
 end
+outer_product(v) = v * v'
 
 """
-    mean(q::AbstractVector{<:Quaternion}, w)
-Calculate the mean Quaternion via eigenvalue decomposition.
+    mean(q::AbstractVector{<:Quaternion}, w::AbstractWeights)
+Calculate the weighted mean Quaternion via eigenvalue decomposition.
 Based on "Averaging Quaternions", Markley et al. 2007.
 """
-function Statistics.mean(q::AbstractVector{<:Quaternion}, w::AbstractVector)
-    # TODO Broadcasting not type stable but faster than list comprehension?
-    wo = @. w * outer_product(q)
-    M = sum(wo) |> Symmetric
+function Statistics.mean(q::AbstractArray{<:Quaternion}, w::AbstractWeights)
+    outer = outer_product.(q)
+    # wo = @. w * outer_product(q)
+    M = sum(outer, w) |> Symmetric
     # sorted → last column contains the eigenvector corresponding to the largest eigenvalue
     v = eigvecs(M)[:, end]
     # eigenvalue has unit length → no normalization required
     Quaternion(v...)
+end
+
+"""
+    mean_and_cov(x::AbstractVector{<:Quaternion}, w::AbstractWeights, dims::Int; corrected=false)
+For particle filters use analytic / reliability weights which describe an **importance** of each observation.
+Compatibility with matrix function by ignoring dims.
+"""
+function StatsBase.mean_and_cov(x::AbstractVector{<:Quaternion}, w::AbstractWeights, dims::Int=1; corrected=false)
+    # StatsBase cannot calculate a proper mean and differences for Quaternions -> use low level API
+    μ = mean(x, w)
+    diffs = x .⊖ μ
+    M = reduce(hcat, diffs)
+    # Use zero mean since we already have differences 
+    Σ = cov(SimpleCovariance(; corrected=corrected), M, w; mean=0, dims=2)
+    μ, Σ
+end
+
+"""
+    cov(x::AbstractVector{<:Quaternion}, w::AbstractWeights, dims::Int; corrected=false)
+For particle filters use analytic / reliability weights which describe an **importance** of each observation.
+Compatibility with matrix function by ignoring dims.
+"""
+function Statistics.cov(x::AbstractVector{<:Quaternion}, w::AbstractWeights, dims::Int=1; corrected::Union{Bool,Nothing}=nothing)
+    _, Σ = mean_and_cov(x, w, dims; corrected=corrected)
+    Σ
 end
