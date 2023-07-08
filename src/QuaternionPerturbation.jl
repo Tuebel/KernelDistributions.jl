@@ -76,6 +76,7 @@ function Statistics.mean(q::AbstractArray{<:Quaternion}, w::AbstractWeights)
     # eigenvalue has unit length → no normalization required
     Quaternion(v...)
 end
+Statistics.mean(q::AbstractArray{<:Quaternion}, w::UnitWeights) = mean(q, weights(w))
 
 """
     mean_and_cov(x::AbstractVector{<:Quaternion}, w::AbstractWeights, dims::Int; corrected=false)
@@ -97,7 +98,7 @@ end
 For particle filters use analytic / reliability weights which describe an **importance** of each observation.
 Compatibility with matrix function by ignoring dims.
 """
-function Statistics.cov(x::AbstractVector{<:Quaternion}, w::AbstractWeights, dims::Int=1; corrected::Union{Bool,Nothing}=nothing)
+function Statistics.cov(x::AbstractVector{<:Quaternion{T}}, w::AbstractWeights=uweights(T, length(x)), dims::Int=1; corrected=false) where {T}
     _, Σ = mean_and_cov(x, w, dims; corrected=corrected)
     Σ
 end
