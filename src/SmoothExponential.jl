@@ -18,17 +18,33 @@ end
 
 Base.show(io::IO, dist::SmoothExponential{T}) where {T} = print(io, "SmoothExponential{$(T)}, min: $(dist.min), max: $(dist.max), β: $(dist.β), σ: $(dist.σ)")
 
+
+
 # Accurate version uses lower and upper bound
 accurate_normalization(d::SmoothExponential) = -logsubexp(-d.min / d.β, -d.max / d.β)
 accurate_factor(d::SmoothExponential, x) = (-x / d.β + (d.σ / d.β)^2 / 2) - log(d.β) + accurate_normalization(d)
 function accurate_logerf(d::SmoothExponential{T}, x) where {T}
-    invsqrt2σ = inv(sqrt(T(2)) * d.σ)
-    common = d.σ / (sqrt(T(2)) * d.β) - x * invsqrt2σ
+    invsqrt2σ = inv(my_sqrt2(T) * d.σ)
+    common = d.σ / (my_sqrt2(T) * d.β) - x * invsqrt2σ
     lower = d.min * invsqrt2σ
     upper = d.max * invsqrt2σ
-    # TODO logerf does not work with CUDA & Julia > 1.9 https://github.com/JuliaGPU/GPUCompiler.jl/issues/384
-    loghalf + log(erf(common + lower, common + upper))
+    loghalf + my_logerf(common + lower, common + upper)
 end
+
+# Re-implementation of LogExpFunctions logerf which does not work with CUDA & Julia > 1.9 https://github.com/JuliaGPU/GPUCompiler.jl/issues/384 
+function my_logerf(a::T, b::T) where {T<:Real}
+    if abs(a) ≤ my_invsqrt2(T) && abs(b) ≤ my_invsqrt2(T)
+        return log(erf(a, b))
+    elseif b > a > 0
+        return logerfc(a) + log1mexp(logerfc(b) - logerfc(a))
+    elseif a < b < 0
+        return logerfc(-b) + LogExpFunctions.log1mexp(logerfc(-a) - logerfc(-b))
+    else
+        return log(erf(a, b))
+    end
+end
+my_sqrt2(::Type{T}) where {T<:Real} = T(sqrt2)
+my_invsqrt2(::Type{T}) where {T<:Real} = T(invsqrt2)
 
 # See my (Tim Redick) dissertation for the derivation.
 Distributions.logpdf(dist::SmoothExponential{T}, x) where {T} = insupport(dist, x) ? accurate_factor(dist, x) + accurate_logerf(dist, x) : typemin(T)
