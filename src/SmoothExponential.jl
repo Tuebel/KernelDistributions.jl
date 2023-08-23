@@ -26,7 +26,8 @@ function accurate_logerf(d::SmoothExponential{T}, x) where {T}
     common = d.σ / (sqrt(T(2)) * d.β) - x * invsqrt2σ
     lower = d.min * invsqrt2σ
     upper = d.max * invsqrt2σ
-    loghalf + logerf(common + lower, common + upper)
+    # TODO logerf does not work with CUDA & Julia > 1.9 https://github.com/JuliaGPU/GPUCompiler.jl/issues/384
+    loghalf + log(erf(common + lower, common + upper))
 end
 
 # See my (Tim Redick) dissertation for the derivation.
