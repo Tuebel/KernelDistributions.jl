@@ -18,8 +18,6 @@ end
 
 Base.show(io::IO, dist::SmoothExponential{T}) where {T} = print(io, "SmoothExponential{$(T)}, min: $(dist.min), max: $(dist.max), β: $(dist.β), σ: $(dist.σ)")
 
-
-
 # Accurate version uses lower and upper bound
 accurate_normalization(d::SmoothExponential) = -logsubexp(-d.min / d.β, -d.max / d.β)
 accurate_factor(d::SmoothExponential, x) = (-x / d.β + (d.σ / d.β)^2 / 2) - log(d.β) + accurate_normalization(d)
@@ -59,4 +57,5 @@ end
 Base.maximum(::SmoothExponential{T}) where {T} = typemax(T)
 Base.minimum(::SmoothExponential{T}) where {T} = typemin(T)
 Bijectors.bijector(::SmoothExponential) = ZeroIdentity()
-Distributions.insupport(dist::SmoothExponential, x::Real) = true
+# Numerical issues if min≈max. Return limit
+Distributions.insupport(dist::SmoothExponential{T}, x::Real) where {T} = abs(dist.max - dist.min) < eps(T) ? false : true
