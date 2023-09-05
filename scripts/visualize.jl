@@ -7,6 +7,18 @@ using Quaternions
 using Rotations
 using StatsBase: fit, Histogram
 
+const DISS_PT = 422.52348
+const DISS_PX = DISS_PT / 0.75
+
+CairoMakie.activate!(type="svg")
+set_theme!(fonts=(;
+        regular="FreeSans:style=Medium",
+        bold="FreeSans:style=Bold",
+        italic="FreeSans:style=Oblique",
+        bolditalic="FreeSans:style=BoldOblique"),
+    fontsize=11, # Latex "small" for normal 12
+    resolution=(DISS_PT, DISS_PT / 2))
+
 # @license BSD-3 https://opensource.org/licenses/BSD-3-Clause
 # Copyright (c) 2023, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
@@ -21,7 +33,7 @@ end
 Plot the density of the rotations by rotating a point on the unit sphere.
 The density of the rotations is visualized as a heatmap and takes into account the non-uniformity of the patches' surface area on a sphere.
 """
-function sphere_density(rotations, point=[0, 0, 1]; n_θ=50, n_ϕ=25, color=:viridis, kwargs...)
+function sphere_density(axis, rotations, point=[0, 0, 1]; n_θ=50, n_ϕ=25, rasterize=3, kwargs...)
     # rotate on unit sphere
     r_points = map(r -> Vector(r * normalize(point)), rotations)
     # histogram of spherical coordinates: θ ∈ [-π,π], ϕ ∈ [-π/2,π/2]
@@ -48,30 +60,41 @@ function sphere_density(rotations, point=[0, 0, 1]; n_θ=50, n_ϕ=25, color=:vir
     y_surf = sin.(θ_surf) * sin.(ϕ_surf)'
     z_surf = ones(n_θ) * cos.(ϕ_surf)'
 
-    # override fill_z to use the weights for the surface color
-    surface(x_surf, y_surf, z_surf; color=weights)
+    # set surface color to the weights
+    surface!(axis, x_surf, y_surf, z_surf; color=weights, rasterize=rasterize, kwargs...)
 end
 
-
 # Not uniformly distributed rotations
+fig = Figure()
+ax_eul = Axis3(fig[1, 1]; aspect=:equal, azimuth=45, xticks=[-1, 0, 1], yticks=[-1, 0, 1], zticks=[0, 1], title="ZYX-Euler")
+ax_quat = Axis3(fig[1, 2]; aspect=:equal, azimuth=45, xticks=[-1, 0, 1], yticks=[-1, 0, 1], zticks=[0, 1], title="Quaternion")
+
 eulers = [RotZYX((2π * rand(3))...) for _ in 1:500_000]
 # Reduce number of patches for reasonable PDF sizes
-scene = sphere_density(eulers; n_θ=15, n_ϕ=15)
-save("plot_euler.pdf", scene)
-
-# Not uniformly distributed rotations
-quats = [rand(QuaternionF64) |> sign for _ in 1:500_000]
-rots = QuatRotation.(quats)
-scene = sphere_density(rots; n_θ=15, n_ϕ=15)
-save("plot_quat.pdf", scene)
-
-# Uniformly distributed rotations
-quats = [randn(QuaternionF64) |> sign for _ in 1:500_000]
-rots = QuatRotation.(quats)
-scene = sphere_density(rots; n_θ=15, n_ϕ=15)
-save("plot_uniform.pdf", scene)
+sphere_density(ax_eul, eulers; n_θ=50, n_ϕ=50)
 
 # Uniformly distributed rotations
 quats = [rand(QuaternionUniform()) |> sign for _ in 1:500_000]
 rots = QuatRotation.(quats)
-scene = sphere_density(rots; n_θ=15, n_ϕ=15)
+sphere_density(ax_quat, rots; n_θ=50, n_ϕ=50)
+
+Colorbar(fig[:, end+1]; size=10, label="density")
+fig
+save("random_rotation.pdf", fig)
+
+# Next plot
+fig = Figure()
+ax1 = Axis3(fig[1, 1]; aspect=:equal, azimuth=45)
+ax2 = Axis3(fig[1, 2]; aspect=:equal, azimuth=45)
+
+# Not uniformly distributed rotations
+quats = [rand(QuaternionF64) |> sign for _ in 1:500_000]
+rots = QuatRotation.(quats)
+sphere_density(ax1, rots; n_θ=20, n_ϕ=20)
+
+# Uniformly distributed rotations
+quats = [randn(QuaternionF64) |> sign for _ in 1:500_000]
+rots = QuatRotation.(quats)
+sphere_density(ax2, rots; n_θ=20, n_ϕ=20)
+Colorbar(fig[:, end+1])
+fig
