@@ -9,3 +9,5 @@ Manifest.toml
 coverage
 coverage_html
 *.cov
+*.pdf
+*.svg
