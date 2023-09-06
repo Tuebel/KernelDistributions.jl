@@ -7,17 +7,28 @@ using Quaternions
 using Rotations
 using StatsBase: fit, Histogram
 
-const DISS_PT = 422.52348
-const DISS_PX = DISS_PT / 0.75
-
-CairoMakie.activate!(type="svg")
-set_theme!(fonts=(;
-        regular="FreeSans:style=Medium",
-        bold="FreeSans:style=Bold",
-        italic="FreeSans:style=Oblique",
-        bolditalic="FreeSans:style=BoldOblique"),
-    fontsize=11, # Latex "small" for normal 12
-    resolution=(DISS_PT, DISS_PT / 2))
+const DISS_WIDTH = 422.52348
+function diss_defaults()
+    # GLMakie uses the original GLAbstractions, I hijacked GLAbstractions for my purposes
+set_theme!(
+        palette=(; density_color=DENSITY_PALETTE, wong2=WONG2, wong2_alpha=WONG2_ALPHA),
+        Axis=(; xticklabelsize=9, yticklabelsize=9, xgridstyle=:dash, ygridstyle=:dash, xticksize=0.4, yticksize=0.4, spinewidth=0.7),
+        Axis3=(; xticklabelsize=9, yticklabelsize=9, zticklabelsize=9, xticksize=0.4, yticksize=0.4, zticksize=0.4, spinewidth=0.7),
+        CairoMakie=(; type="png", px_per_unit=2.0),
+        Colorbar=(; width=7),
+        Density=(; strokewidth=1, cycle=MK.Cycle([:color => :density_color, :strokecolor => :color], covary=true)),
+        Legend=(; patchsize=(5, 5), padding=(5, 5, 5, 5), framewidth=0.7),
+        Lines=(; linewidth=1),
+        Scatter=(; markersize=4),
+        VLines=(; cycle=[:color => :wong2], linestyle=:dash),
+        VSpan=(; cycle=[:color => :wong2_alpha]),
+        fontsize=11, # Latex "small" for normal 12
+        resolution=(DISS_WIDTH, DISS_WIDTH / 2),
+        rowgap=5, colgap=5,
+        figure_padding=5
+    )
+end
+diss_defaults()
 
 # @license BSD-3 https://opensource.org/licenses/BSD-3-Clause
 # Copyright (c) 2023, Institute of Automatic Control - RWTH Aachen University
@@ -79,7 +90,7 @@ rots = QuatRotation.(quats)
 sphere_density(ax_quat, rots; n_θ=50, n_ϕ=50)
 
 Colorbar(fig[:, end+1]; size=10, label="density")
-fig
+display(fig)
 save("random_rotation.pdf", fig)
 
 # Next plot
