@@ -10,13 +10,11 @@ using StatsBase: fit, Histogram
 const DISS_WIDTH = 422.52348
 function diss_defaults()
     # GLMakie uses the original GLAbstractions, I hijacked GLAbstractions for my purposes
-set_theme!(
-        palette=(; density_color=DENSITY_PALETTE, wong2=WONG2, wong2_alpha=WONG2_ALPHA),
+    set_theme!(
         Axis=(; xticklabelsize=9, yticklabelsize=9, xgridstyle=:dash, ygridstyle=:dash, xticksize=0.4, yticksize=0.4, spinewidth=0.7),
         Axis3=(; xticklabelsize=9, yticklabelsize=9, zticklabelsize=9, xticksize=0.4, yticksize=0.4, zticksize=0.4, spinewidth=0.7),
         CairoMakie=(; type="png", px_per_unit=2.0),
         Colorbar=(; width=7),
-        Density=(; strokewidth=1, cycle=MK.Cycle([:color => :density_color, :strokecolor => :color], covary=true)),
         Legend=(; patchsize=(5, 5), padding=(5, 5, 5, 5), framewidth=0.7),
         Lines=(; linewidth=1),
         Scatter=(; markersize=4),
@@ -44,7 +42,7 @@ end
 Plot the density of the rotations by rotating a point on the unit sphere.
 The density of the rotations is visualized as a heatmap and takes into account the non-uniformity of the patches' surface area on a sphere.
 """
-function sphere_density(axis, rotations, point=[0, 0, 1]; n_θ=50, n_ϕ=25, rasterize=3, kwargs...)
+function sphere_density!(axis, rotations, point=[0, 0, 1]; n_θ=50, n_ϕ=25, rasterize=3, kwargs...)
     # rotate on unit sphere
     r_points = map(r -> Vector(r * normalize(point)), rotations)
     # histogram of spherical coordinates: θ ∈ [-π,π], ϕ ∈ [-π/2,π/2]
@@ -82,12 +80,12 @@ ax_quat = Axis3(fig[1, 2]; aspect=:equal, azimuth=45, xticks=[-1, 0, 1], yticks=
 
 eulers = [RotZYX((2π * rand(3))...) for _ in 1:500_000]
 # Reduce number of patches for reasonable PDF sizes
-sphere_density(ax_eul, eulers; n_θ=50, n_ϕ=50)
+sphere_density!(ax_eul, eulers; n_θ=50, n_ϕ=50)
 
 # Uniformly distributed rotations
 quats = [rand(QuaternionUniform()) |> sign for _ in 1:500_000]
 rots = QuatRotation.(quats)
-sphere_density(ax_quat, rots; n_θ=50, n_ϕ=50)
+sphere_density!(ax_quat, rots; n_θ=50, n_ϕ=50)
 
 Colorbar(fig[:, end+1]; size=10, label="density")
 display(fig)
@@ -101,11 +99,11 @@ ax2 = Axis3(fig[1, 2]; aspect=:equal, azimuth=45)
 # Not uniformly distributed rotations
 quats = [rand(QuaternionF64) |> sign for _ in 1:500_000]
 rots = QuatRotation.(quats)
-sphere_density(ax1, rots; n_θ=20, n_ϕ=20)
+sphere_density!(ax1, rots; n_θ=20, n_ϕ=20)
 
 # Uniformly distributed rotations
 quats = [randn(QuaternionF64) |> sign for _ in 1:500_000]
 rots = QuatRotation.(quats)
-sphere_density(ax2, rots; n_θ=20, n_ϕ=20)
+sphere_density!(ax2, rots; n_θ=20, n_ϕ=20)
 Colorbar(fig[:, end+1])
 fig
