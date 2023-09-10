@@ -1,3 +1,4 @@
+using Accessors
 using CoordinateTransformations: SphericalFromCartesian
 using CairoMakie
 using IterTools: partition
@@ -8,11 +9,16 @@ using Rotations
 using StatsBase: fit, Histogram
 
 const DISS_WIDTH = 422.52348
+
+function wilkinson_ticks()
+    wt = WilkinsonTicks(5)
+    @reset wt.granularity_weight = 1
+end
 function diss_defaults()
     # GLMakie uses the original GLAbstractions, I hijacked GLAbstractions for my purposes
     set_theme!(
-        Axis=(; xticklabelsize=9, yticklabelsize=9, xgridstyle=:dash, ygridstyle=:dash, xticksize=0.4, yticksize=0.4, spinewidth=0.7),
-        Axis3=(; xticklabelsize=9, yticklabelsize=9, zticklabelsize=9, xticksize=0.4, yticksize=0.4, zticksize=0.4, spinewidth=0.7),
+        Axis=(; xticklabelsize=9, yticklabelsize=9, xgridstyle=:dash, ygridstyle=:dash, xgridwidth=0.5, ygridwidth=0.5, xticks=wilkinson_ticks(), yticks=wilkinson_ticks(), xticksize=0.4, yticksize=0.4, spinewidth=0.7),
+        Axis3=(; xticklabelsize=9, yticklabelsize=9, zticklabelsize=9, xticksize=0.4, yticksize=0.4, zticksize=0.4, xgridwidth=0.5, ygridwidth=0.5, zgridwidth=0.5, spinewidth=0.7),
         CairoMakie=(; type="png", px_per_unit=2.0),
         Colorbar=(; width=7),
         Legend=(; patchsize=(5, 5), padding=(5, 5, 5, 5), framewidth=0.7),

@@ -1,6 +1,8 @@
 [deps]
+Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 CoordinateTransformations = "150eb455-5306-5404-9cee-2592286d6298"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 KernelDistributions = "9994844f-d2c8-4ad1-b0b3-ac5ee308e667"
 Quaternions = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"

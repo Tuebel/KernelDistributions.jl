@@ -3,7 +3,7 @@
 # All rights reserved. 
 
 """
-    SmoothExponential
+    SmoothExponential(min, max, β, σ)
 Smooth truncated exponential distribution by convolving the exponential with a normal distribution: Smooth = Exp ⋆ Normal
 This results in smooth min and max limits and a definition on ℝ instead of ℝ⁺
 
