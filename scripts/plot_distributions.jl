@@ -62,31 +62,20 @@ pdf_smooth = pdf.(smooth_exponential, z)
 pdf_truncated = pdf.(truncated_exponential, z)
 pdf_uniform = 0.5 .* pdf.(uniform, z)
 
-fig = MK.Figure()
-ax1 = MK.Axis(fig[1, 1])
-# ax2 = MK.Axis(fig[1, 2])
-ax2 = MK.Axis(fig[2, 1])
-# ax4 = MK.Axis(fig[2, 2])
+fig = MK.Figure(resolution=(DISS_WIDTH, 2 / 5 * DISS_WIDTH))
+ax1 = MK.Axis(fig[1, 1]; title="Exponential")
+ax2 = MK.Axis(fig[1, 2]; title="Mixture")
 
 MK.lines!(ax1, z, pdf_smooth; label="smooth exponential")
 MK.lines!(ax1, z, pdf_truncated; label="truncated exponential")
 MK.lines!(ax1, z, pdf_exponential; label="unmodified exponential")
 MK.vspan!(ax1, 0.0, μ)
-MK.axislegend(ax1)
 
-# MK.lines!(ax2, z, pdf_normal + pdf_smooth + pdf_uniform; label="smooth")
-# MK.vlines!(ax2, μ)
-# MK.axislegend(ax2)
-
-# MK.lines!(ax3, z, pdf_normal + pdf_exponential + pdf_uniform; label="unmodified")
-# MK.vlines!(ax3, μ)
-# MK.axislegend(ax3)
-
-MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_smooth + pdf_uniform); label="smooth mixture")
-MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_truncated + pdf_uniform); label="truncated mixture")
-MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_exponential + pdf_uniform); label="unmodified mixture")
+MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_smooth + pdf_uniform); label="smooth")
+MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_truncated + pdf_uniform); label="truncated")
+MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_exponential + pdf_uniform); label="unmodified")
 MK.vspan!(ax2, 0.0, μ)
-MK.axislegend(ax2)
+MK.Legend(fig[2, :], ax2; orientation=:horizontal)
 
-fig
 MK.save("pixel_likelihoods.pdf", fig)
+fig
