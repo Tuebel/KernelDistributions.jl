@@ -4,7 +4,7 @@
 
 """
     BroadcastedDistribution{T,N,M}
-A **lazy** implementation for multi-dimensional distributions which makes it natural to use it on different devices and applying transformations afterwards.
+A **lazy** implementation for multi-dimensional distributions which makes it natural to use on different devices and applying transformations afterwards.
 
 At the core, `marginals` is a broadcasted distribution for a set of parameters.
 Generating random numbers is based on the promoted type `T` of the parameters and stored in.
