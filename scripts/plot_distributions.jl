@@ -64,16 +64,18 @@ pdf_uniform = 0.5 .* pdf.(uniform, z)
 
 fig = MK.Figure(resolution=(DISS_WIDTH, 2 / 5 * DISS_WIDTH))
 ax1 = MK.Axis(fig[1, 1]; title="Exponential")
-ax2 = MK.Axis(fig[1, 2]; title="Mixture")
+ax2 = MK.Axis(fig[1, 2]; title="Mixture", limits=((0, nothing), nothing))
 
 MK.lines!(ax1, z, pdf_smooth; label="smooth exponential")
 MK.lines!(ax1, z, pdf_truncated; label="truncated exponential")
 MK.lines!(ax1, z, pdf_exponential; label="unmodified exponential")
+MK.lines!(ax1, z, w_tail * pdf_uniform; label="only uniform", visible=false)
 MK.vspan!(ax1, 0.0, μ)
 
 MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_smooth + pdf_uniform); label="smooth")
 MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_truncated + pdf_uniform); label="truncated")
 MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_exponential + pdf_uniform); label="unmodified")
+MK.lines!(ax2, z, pdf_normal + w_tail * (pdf_uniform); label="only uniform")
 MK.vspan!(ax2, 0.0, μ)
 MK.Legend(fig[2, :], ax2; orientation=:horizontal)
 
