@@ -50,8 +50,7 @@ Distributions.logpdf(dist::SmoothExponential{T}, x) where {T} = insupport(dist, 
 function rand_kernel(rng::AbstractRNG, dist::SmoothExponential{T}) where {T}
     # Distributions.jl truncated this fails to compile on RTX3080 so use naive implementation
     μ = rand(rng, KernelExponential(dist.β)) + dist.min
-    in_interval(x) = dist.min ≤ x ≤ dist.max
-    while μ < dist.min || μ > dist.max
+    while μ > dist.max
         μ = rand(rng, KernelExponential(dist.β)) + dist.min
     end
     rand(rng, KernelNormal(μ, dist.σ))
