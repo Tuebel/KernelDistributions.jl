@@ -48,12 +48,9 @@ Distributions.logpdf(dist::SmoothExponential{T}, x) where {T} = insupport(dist, 
 
 # Exponential convoluted with normal: Sample from exponential and then add noise of normal
 function rand_kernel(rng::AbstractRNG, dist::SmoothExponential{T}) where {T}
-    # Distributions.jl truncated this fails to compile on RTX3080 so use naive implementation
-    μ = rand(rng, KernelExponential(dist.β)) + dist.min
-    # BUG on RTX 3080 sometimes samples forever
-    # while μ > dist.max
-    #     μ = rand(rng, KernelExponential(dist.β)) + dist.min
-    # end
+    # Closed form solution for random from truncated: https://math.stackexchange.com/questions/788285/generate-exponential-random-values-in-a-given-range
+    u = rand(rng, T)
+    μ = -dist.β * log(exp(-dist.min / dist.β) - u * (exp(-dist.min / dist.β) - exp(-dist.max / dist.β)))
     rand(rng, KernelNormal(μ, dist.σ))
 end
 
