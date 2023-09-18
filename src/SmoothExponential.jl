@@ -20,13 +20,12 @@ Base.show(io::IO, dist::SmoothExponential{T}) where {T} = print(io, "SmoothExpon
 
 # Accurate version uses lower and upper bound
 accurate_normalization(d::SmoothExponential) = -logsubexp(-d.min / d.β, -d.max / d.β)
-accurate_factor(d::SmoothExponential, x) = (-x / d.β + (d.σ / d.β)^2 / 2) - log(d.β) + accurate_normalization(d)
+accurate_factor(d::SmoothExponential, x) = (-x / d.β + (d.σ / d.β)^2 / 2) - log(d.β) + accurate_normalization(d) + loghalf
 function accurate_logerf(d::SmoothExponential{T}, x) where {T}
     invsqrt2σ = inv(my_sqrt2(T) * d.σ)
-    common = d.σ / (my_sqrt2(T) * d.β) - x * invsqrt2σ
-    lower = d.min * invsqrt2σ
-    upper = d.max * invsqrt2σ
-    loghalf + my_logerf(common + lower, common + upper)
+    lower = (d.min + d.σ^2 / d.β - x) * invsqrt2σ
+    upper = (d.max + d.σ^2 / d.β - x) * invsqrt2σ
+    my_logerf(lower, upper)
 end
 
 # Re-implementation of LogExpFunctions logerf which does not work with CUDA & Julia > 1.9 https://github.com/JuliaGPU/GPUCompiler.jl/issues/384 
