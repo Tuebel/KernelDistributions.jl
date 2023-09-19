@@ -89,6 +89,7 @@ ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="probability density", limits
 for o in 0.2:0.2:0.8
     MK.lines!(ax, z, o * pdf_normal + (1 - o) * (pdf_smooth + pdf_uniform); label="o = $o")
 end
+MK.vspan!(ax, 0.0, μ)
 MK.Legend(fig[:, 2], ax)
 
 MK.save("pixel_likelihoods_o_smooth.pdf", fig)
@@ -100,6 +101,7 @@ ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="probability density", limits
 for o in 0.2:0.2:0.8
     MK.lines!(ax, z, o * pdf_normal + (1 - o) * (pdf_exponential + pdf_uniform); label="o = $o")
 end
+MK.vspan!(ax, 0.0, μ)
 MK.Legend(fig[:, 2], ax)
 
 MK.save("pixel_likelihoods_o_unmodified.pdf", fig)
@@ -111,6 +113,7 @@ ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="probability density", limits
 for o in 0.2:0.2:0.8
     MK.lines!(ax, z, o * pdf_normal + (1 - o) * (pdf_truncated + pdf_uniform); label="o = $o")
 end
+MK.vspan!(ax, 0.0, μ)
 MK.Legend(fig[:, 2], ax)
 
 MK.save("pixel_likelihoods_o_truncated.pdf", fig)
