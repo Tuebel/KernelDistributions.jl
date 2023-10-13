@@ -31,7 +31,7 @@ end
 This rotation is specified by a vector of θ ∈ R3 in the vector space tangent [...]' (eq. 158, Sola 2012)
 """
 ⊕(q::Quaternion, θ) = q ⊕ exp_map(θ)
-⊕(q1::Quaternion, q2::Quaternion) = q1 * q2
+⊕(q1::Quaternion, q2::Quaternion) = nonzero_sign(q1 * q2)
 # Default to addition
 ⊕(a, b) = a + b
 

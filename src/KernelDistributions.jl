@@ -82,6 +82,7 @@ include("TailUniform.jl")
 include("CircularUniform.jl")
 include("QuaternionUniform.jl")
 include("QuaternionPerturbation.jl")
+include("QuaternionNormal.jl")
 include("SmoothExponential.jl")
 
 export AbstractKernelDistribution
@@ -105,7 +106,7 @@ export KernelUniform
 # Special
 export BroadcastedDistribution
 export CircularUniform
-export QuaternionUniform, ⊕, ⊖
+export QuaternionUniform, ⊕, ⊖, QuaternionNormal
 export SmoothExponential
 export TailUniform
 
@@ -113,6 +114,7 @@ export param_dims
 
 using Reexport
 @reexport import DensityInterface: logdensityof
+@reexport import Quaternions: Quaternion
 @reexport import Random: rand!
 
 # Bijectors
