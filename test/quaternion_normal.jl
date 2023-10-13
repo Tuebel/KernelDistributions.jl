@@ -23,7 +23,7 @@ rng = Random.default_rng()
     l = @inferred logdensityof(d, x)
     @test l isa Float64
 
-    d = QuaternionNormal(sign(Quaternion(1.0f0, 1.0f0, 0, 0)), fill(0.1f0, 3))
+    d = QuaternionNormal(sign(Quaternion(1.0f0, 1.0f0, 0, 0)), 0.1f0)
     x = @inferred rand(rng, d)
     @test x isa Quaternion{Float32}
     @test abs(x) ≈ 1
