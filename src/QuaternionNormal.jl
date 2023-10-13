@@ -8,17 +8,17 @@ Enables to use QuaternionPerturbation as a prior.
 """
 struct QuaternionNormal{T} <: AbstractKernelDistribution{Quaternion{T},Continuous}
     μ::Quaternion{T}
-    σ::T
+    σ::Vector{T}
 end
 
-QuaternionNormal(::Type{T}=Float32) where {T} = QuaternionNormal{T}(Quaternion(one(T), zero(T), zero(T), zero(T)), one(T))
+QuaternionNormal(::Type{T}=Float32) where {T} = QuaternionNormal{T}(Quaternion(one(T), zero(T), zero(T), zero(T)), fill(one(T), 3))
 
 function Distributions.logpdf(dist::QuaternionNormal{T}, x::Quaternion) where {T}
     w = dist.μ ⊖ nonzero_sign(x)
-    sum(logpdf.(KernelNormal(zero(T), dist.σ), w))
+    sum(logpdf.(KernelNormal.(zero(T), dist.σ), w))
 end
 
-rand_kernel(rng::AbstractRNG, dist::QuaternionNormal{T}) where {T} = dist.μ ⊕ rand(rng, KernelNormal(zero(T), dist.σ), 3)
+rand_kernel(rng::AbstractRNG, dist::QuaternionNormal{T}) where {T} = dist.μ ⊕ rand.(rng, KernelNormal.(zero(T), dist.σ))
 
 # Bijectors
 Bijectors.bijector(::QuaternionNormal) = ZeroIdentity()
