@@ -19,6 +19,7 @@ array_for_rng(::CUDA.RNG) = CuArray
 
 # Make KernelDistributions extendable by allowing to override it for custom distributions
 array_for_rng(rng::AbstractRNG, ::KernelOrTransformedKernel{T}, dims::Integer...) where {T} = array_for_rng(rng, T, dims...)
+array_for_rng(rng::AbstractRNG, array::AbstractArray{<:KernelOrTransformedKernel{T}}, dims::Integer...) where {T} = array_for_rng(rng, T, size(array)..., dims...)
 
 """
     rand(rng, dist, [dims...])
