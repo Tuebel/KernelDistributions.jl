@@ -36,7 +36,7 @@ end
 Sample an Array from `dists` of size `dims`.
 """
 function Base.rand(rng::AbstractRNG, dists::AbstractArray{<:KernelOrTransformedKernel}, dims::Integer...)
-    A = array_for_rng(rng, dists, size(dists)..., dims...)
+    A = array_for_rng(rng, dists, dims...)
     rand!(rng, dists, A)
 end
 
