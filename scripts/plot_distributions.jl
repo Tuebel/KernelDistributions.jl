@@ -64,8 +64,8 @@ pdf_truncated = pdf.(truncated_exponential, z)
 pdf_uniform = 0.5 .* pdf.(uniform, z)
 
 fig = MK.Figure(resolution=(DISS_WIDTH, 2 / 5 * DISS_WIDTH))
-ax1 = MK.Axis(fig[1, 1]; title="Exponential", xlabel="depth / m", ylabel="density / -", limits=((0, nothing), (0, nothing)))
-ax2 = MK.Axis(fig[1, 2]; title="Mixture", xlabel="depth / m", limits=((0, nothing), (0, nothing)))
+ax1 = MK.Axis(fig[1, 1]; title="Occlusion Model", xlabel="depth / m", ylabel="density / -", limits=((0, nothing), (0, nothing)))
+ax2 = MK.Axis(fig[1, 2]; title="Depth Pixel Model", xlabel="depth / m", limits=((0, nothing), (0, nothing)))
 
 MK.lines!(ax1, z, w_tail * pdf_uniform; label="only uniform", visible=false)
 MK.lines!(ax1, z, pdf_exponential; label="unmodified exponential")
