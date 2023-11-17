@@ -64,7 +64,7 @@ pdf_truncated = pdf.(truncated_exponential, z)
 pdf_uniform = 0.5 .* pdf.(uniform, z)
 
 fig = MK.Figure(resolution=(DISS_WIDTH, 2 / 5 * DISS_WIDTH))
-ax1 = MK.Axis(fig[1, 1]; title="Exponential", xlabel="depth / m", ylabel="probability density", limits=((0, nothing), (0, nothing)))
+ax1 = MK.Axis(fig[1, 1]; title="Exponential", xlabel="depth / m", ylabel="density / -", limits=((0, nothing), (0, nothing)))
 ax2 = MK.Axis(fig[1, 2]; title="Mixture", xlabel="depth / m", limits=((0, nothing), (0, nothing)))
 
 MK.lines!(ax1, z, w_tail * pdf_uniform; label="only uniform", visible=false)
@@ -84,8 +84,8 @@ MK.save("pixel_likelihoods.pdf", fig)
 fig
 
 # different classification probabilities for smooth
-fig = MK.Figure(resolution=(DISS_WIDTH, 2 / 5 * DISS_WIDTH))
-ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="probability density", limits=((0, nothing), (0, nothing)))
+fig = MK.Figure(resolution=(DISS_WIDTH, 1 / 3 * DISS_WIDTH))
+ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="density / -", limits=((0, nothing), (0, nothing)))
 for o in 0.2:0.2:0.8
     MK.lines!(ax, z, o * pdf_normal + (1 - o) * (pdf_smooth + pdf_uniform); label="o = $o")
 end
@@ -96,8 +96,8 @@ MK.save("pixel_likelihoods_o_smooth.pdf", fig)
 fig
 
 # different classification probabilities for exponential
-fig = MK.Figure(resolution=(DISS_WIDTH, 2 / 5 * DISS_WIDTH))
-ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="probability density", limits=((0, nothing), (0, nothing)))
+fig = MK.Figure(resolution=(DISS_WIDTH, 1 / 3 * DISS_WIDTH))
+ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="density / -", limits=((0, nothing), (0, nothing)))
 for o in 0.2:0.2:0.8
     MK.lines!(ax, z, o * pdf_normal + (1 - o) * (pdf_exponential + pdf_uniform); label="o = $o")
 end
@@ -108,8 +108,8 @@ MK.save("pixel_likelihoods_o_unmodified.pdf", fig)
 fig
 
 # different classification probabilities for truncated
-fig = MK.Figure(resolution=(DISS_WIDTH, 2 / 5 * DISS_WIDTH))
-ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="probability density", limits=((0, nothing), (0, nothing)))
+fig = MK.Figure(resolution=(DISS_WIDTH, 1 / 3 * DISS_WIDTH))
+ax = MK.Axis(fig[1, 1]; xlabel="depth / m", ylabel="density / -", limits=((0, nothing), (0, nothing)))
 for o in 0.2:0.2:0.8
     MK.lines!(ax, z, o * pdf_normal + (1 - o) * (pdf_truncated + pdf_uniform); label="o = $o")
 end
