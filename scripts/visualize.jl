@@ -93,7 +93,7 @@ quats = [rand(QuaternionUniform()) |> sign for _ in 1:500_000]
 rots = QuatRotation.(quats)
 sphere_density!(ax_quat, rots; n_θ=50, n_ϕ=50)
 
-Colorbar(fig[:, end+1]; size=10, label="density")
+Colorbar(fig[:, end+1]; size=10, label="density / -")
 display(fig)
 save("random_rotation.pdf", fig)
 

@@ -55,9 +55,9 @@ y = rand(rng, d, 10_000)
 x = exp.(y)
 
 fig = MK.Figure(resolution=(DISS_WIDTH, 1 / 4 * DISS_WIDTH))
-ax1 = MK.Axis(fig[1, 1]; title="y ~ 𝓝 (1,1)", ylabel="probability density")
+ax1 = MK.Axis(fig[1, 1]; title="y ~ 𝓝 (1,1)", ylabel="density / -")
 ax2 = MK.Axis(fig[1, 2]; title="x=b⁻¹(y)=exp(y)")
 MK.density!(ax1, y)
 MK.density!(ax2, x)
 MK.save("transform_density.pdf", fig)
-fig
+display(fig)
