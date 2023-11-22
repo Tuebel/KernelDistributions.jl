@@ -3,5 +3,6 @@
 # All rights reserved. 
 
 using Documenter, KernelDistributions
+import Documenter.Remotes: GitLab
 
-makedocs(sitename="KernelDistributions")
+makedocs(sitename="KernelDistributions", repo=GitLab("git-ce.rwth-aachen.de", "diss", "kerneldistributions.jl"))
