@@ -6,7 +6,7 @@
     KernelUniform(min, max)
 Type stable implementation of a Uniform distribution.
 Parameterized by the support [min,max].
-If the value is outside the support, logdensityof returns -Inf (alternative [TailUniform](@ref)).
+If the value is outside the support, logdensityof returns -Inf (alternative TailUniform).
 """
 struct KernelUniform{T<:Real} <: AbstractKernelDistribution{T,Continuous}
     min::T
