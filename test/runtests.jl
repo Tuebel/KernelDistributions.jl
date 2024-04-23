@@ -3,7 +3,7 @@
 # All rights reserved. 
 
 using Bijectors
-# using CUDA
+using CUDA
 using KernelDistributions
 using LinearAlgebra
 using Random
@@ -14,11 +14,15 @@ using Test
 # Setup a list of rngs to loop over
 cpurng = Random.default_rng()
 Random.seed!(cpurng, 42)
-# curng = CUDA.default_rng()
-# Random.seed!(curng, 42)
-rngs = [cpurng, curng]
 
-# CUDA.allowscalar(false)
+# Use CUDA conditionally, e.g., not available on public GitHub runners
+if CUDA.functional()
+    curng = CUDA.default_rng()
+    Random.seed!(curng, 42)
+    rngs = [cpurng, curng]
+else
+    rngs = [cpurng]
+end
 
 include("circular_uniform.jl")
 include("dirac.jl")
