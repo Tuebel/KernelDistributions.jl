@@ -5,5 +5,5 @@
 using Documenter, KernelDistributions
 import Documenter.Remotes: GitLab
 
-makedocs(modules=[KernelDistributions], sitename="KernelDistributions")
+makedocs(sitename="KernelDistributions")
 deploydocs(repo="github.com/rwth-irt/KernelDistributions.jl.git")
