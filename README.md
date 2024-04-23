@@ -1,5 +1,6 @@
 [![Run Tests](https://github.com/rwth-irt/KernelDistributions.jl/actions/workflows/run_tests.yml/badge.svg)](https://github.com/rwth-irt/KernelDistributions.jl/actions/workflows/run_tests.yml)
 [![Documenter](https://github.com/rwth-irt/KernelDistributions.jl/actions/workflows/documenter.yml/badge.svg)](https://github.com/rwth-irt/KernelDistributions.jl/actions/workflows/documenter.yml)
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://rwth-irt.github.io/KernelDistributions.jl)
 # KernelDistributions.jl
 Based on [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) but slimmed down to enable CUDA compatibility.
 
